@@ -56,7 +56,7 @@ function appendSession(session) {
   if (!session || !session.id || !session.date || !session.time) throw new Error('缺少上課日期、時間或課程 ID。');
   const rows = sheet.getLastRow() > 1 ? sheet.getRange(2, 3, sheet.getLastRow() - 1, 1).getValues().flat() : [];
   if (rows.includes(session.id)) return response({ ok: true, alreadyExists: true });
-  sheet.appendRow([session.date, session.time, session.id, session.studentId || '', session.studentName || '', session.goal || '']);
+  sheet.appendRow([session.date, session.time, session.id, session.studentId || '', session.studentName || '', session.goal || '', session.record || '']);
   return response({ ok: true });
 }
 
