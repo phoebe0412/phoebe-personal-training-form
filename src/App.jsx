@@ -4,7 +4,7 @@ import { GOOGLE_APPS_SCRIPT_URL } from './config';
 const initialForm = {
   name: '', phone: '', line: '', birthday: '', gender: '', work: '', workOther: '', sleep: '',
   condition: '', conditionNote: '', symptoms: '', injuries: [], injuryNote: '', pregnancy: '', exercise: [],
-  coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: '', timeOther: '',
+  coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: '', timeOther: '', message: '',
 };
 
 const choices = {
@@ -111,6 +111,7 @@ export function App() {
         <li><strong>進修研習</strong><span>KAT training 進階阻力訓練</span></li>
       </ul>
       <p className="hero-copy">訓練不該是生活的負擔，而是讓生活更輕鬆的工具。歡迎預約體驗課，一起找出最適合你的動作模式！</p>
+      <p className="price-tag">體驗價　90 分鐘・NT$1,200</p>
     </header>
 
     <form onSubmit={submit} noValidate>
@@ -140,6 +141,7 @@ export function App() {
       <ChoiceGroup name="focus" label="體驗課最希望教練重點協助您的是？" options={choices.focus} value={form.focus} onChange={update} error={errors.focus} />
       <ChoiceGroup name="frequency" label="若體驗後感覺符合需求，未來每週預計可配合的上課頻率？" options={choices.frequency} value={form.frequency} onChange={update} error={errors.frequency} />
       <ChoiceGroup name="time" label="方便安排上課的常見時段" options={choices.time} value={form.time} onChange={update} otherKey="timeOther" form={form} error={errors.time || errors.timeOther} />
+      <section className="form-section" data-field="message"><label>想對教練說的話<small>選填</small><textarea value={form.message} onChange={(e) => update('message', e.target.value)} placeholder="有任何期待、疑問或想先讓教練知道的事，都可以寫在這裡。" /></label></section>
       <div className="submit-area"><p>送出後，Phoebe 將以 LINE 聯繫您確認課程。</p>{submitError && <p className="submit-error" role="alert">{submitError}</p>}<button type="submit" disabled={isSubmitting}>{isSubmitting ? '資料送出中…' : '送出體驗課申請'}</button></div>
     </form>
   </main>;

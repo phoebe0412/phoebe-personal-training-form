@@ -15,7 +15,7 @@ function doPost(e) {
       payload.condition || '', payload.conditionNote || '', payload.symptoms || '',
       listValue(payload.injuries), payload.injuryNote || '', payload.pregnancy || '',
       listValue(payload.exercise), payload.coaching || '', listValue(payload.barriers),
-      payload.barrierOther || '', payload.focus || '', payload.frequency || '', payload.time || '', payload.timeOther || '',
+      payload.barrierOther || '', payload.focus || '', payload.frequency || '', payload.time || '', payload.timeOther || '', payload.message || '',
     ]);
     return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
