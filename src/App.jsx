@@ -54,10 +54,9 @@ export function App() {
   const [form, setForm] = useState(initialForm);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const update = (key, value) => setForm((previous) => ({ ...previous, [key]: value }));
-  const submit = async (event) => {
+  const submit = (event) => {
     event.preventDefault();
     setSubmitError('');
     const nextErrors = {};
@@ -83,16 +82,11 @@ export function App() {
       setSubmitError('表單收件功能尚未完成設定，請稍後再試。');
       return;
     }
-    setIsSubmitting(true);
-    try {
-      await fetch(GOOGLE_APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(form) });
-      setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (error) {
-      setSubmitError('送出失敗，請確認網路後再試。');
-    } finally {
-      setIsSubmitting(false);
-    }
+    const payload = JSON.stringify(form);
+    const queued = navigator.sendBeacon?.(GOOGLE_APPS_SCRIPT_URL, new Blob([payload], { type: 'text/plain;charset=UTF-8' }));
+    if (!queued) fetch(GOOGLE_APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: payload, keepalive: true }).catch(() => {});
+    setSubmitted(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (submitted) return <main className="page"><div className="success-card"><p className="eyebrow">預約資料已送出</p><h1>謝謝你，{form.name || '學員'}！</h1><p>我會透過你提供的 LINE ID 與你確認體驗課時間。期待一起找回舒服、穩定的動作節奏。</p><button type="button" onClick={() => setSubmitted(false)}>返回表單</button></div></main>;
@@ -143,7 +137,7 @@ export function App() {
       <ChoiceGroup name="frequency" label="若體驗後感覺符合需求，未來每週預計可配合的上課頻率？" options={choices.frequency} value={form.frequency} onChange={update} error={errors.frequency} />
       <ChoiceGroup name="time" label="方便安排上課的常見時段" options={choices.time} value={form.time} onChange={update} otherKey="timeOther" form={form} error={errors.time || errors.timeOther} />
       <section className="form-section" data-field="message"><label>想對教練說的話<small>選填</small><textarea value={form.message} onChange={(e) => update('message', e.target.value)} placeholder="有任何期待、疑問或想先讓教練知道的事，都可以寫在這裡。" /></label></section>
-      <div className="submit-area"><p>送出後，Phoebe 將以 LINE 聯繫您確認課程。</p>{submitError && <p className="submit-error" role="alert">{submitError}</p>}<button type="submit" disabled={isSubmitting}>{isSubmitting ? '資料送出中…' : '送出體驗課申請'}</button></div>
+      <div className="submit-area"><p>送出後，Phoebe 將以 LINE 聯繫您確認課程。</p>{submitError && <p className="submit-error" role="alert">{submitError}</p>}<button type="submit">送出體驗課申請</button></div>
     </form>
   </main>;
 }
