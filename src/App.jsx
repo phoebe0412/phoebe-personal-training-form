@@ -1,75 +1,68 @@
 import { useEffect, useMemo, useState } from 'react';
-import { GOOGLE_APPS_SCRIPT_URL } from './config';
 
 const PROGRAM = [
-  { section: '動態評估與軟組織重置', name: '貓駝式', reps: '8', sets: '2', note: '活化脊椎靈活度、誘發核心深層肌群', unit: '下' },
-  { section: '動態評估與軟組織重置', name: '呼吸練習 1', reps: '5', sets: '2', note: '左右腹腔吸飽氣', unit: '次' },
-  { section: '動態評估與軟組織重置', name: '呼吸練習 2', reps: '5', sets: '2', note: '後背與肋骨吸飽氣', unit: '次' },
-  { section: 'ATG 關節啟動與末端防護', name: '脛前肌上提（Tibialis Raise）', reps: '20', sets: '2', note: '建立腳踝制動與膝蓋防護', unit: '次' },
-  { section: 'ATG 關節啟動與末端防護', name: '斜板深蹲啟動（Slant Board Squat）', reps: '15', sets: '2', note: '誘導膝蓋過腳趾、髕骨肌腱溫熱', unit: '次' },
-  { section: 'ATG 關節啟動與末端防護', name: '大象漫步（Elephant Walk）', reps: '20', sets: '1', note: '放鬆後側鏈與膕繩肌緊', unit: '下' },
-  { section: '單側與結締組織補強', name: 'ATG 分腿蹲（ATG Split Squat）', reps: '8', sets: '3', note: '每側；完全折疊後腳伸展髖屈肌', unit: '下' },
-  { section: '單側與結締組織補強', name: '輔助式北歐挺身（Assisted Nordic Curl）', reps: '5–6', sets: '3', note: '後側鏈肌腱耐受度', unit: '下' },
-  { section: '單側與結締組織補強', name: '壺鈴單手農夫走路', reps: '30', sets: '2', note: '每側；核心抗旋轉', unit: '公尺' },
-  { section: '自由重量主項 — 高品質肌力', name: '俯身啞鈴划船', reps: '8', sets: '3', note: '主訓練動作', unit: '下' },
-  { section: '自由重量主項 — 高品質肌力', name: '滑輪下拉', reps: '8', sets: '3', note: '主訓練動作', unit: '下' },
-  { section: '降溫、放鬆與課堂複盤', name: 'Couch Stretch', reps: '60', sets: '1', note: '每側', unit: '秒' },
+  ['動態評估與軟組織重置', '貓駝式', '8', '2', '下', '活化脊椎靈活度、誘發核心深層肌群'],
+  ['動態評估與軟組織重置', '呼吸練習 1', '5', '2', '次', '左右腹腔吸飽氣'],
+  ['動態評估與軟組織重置', '呼吸練習 2', '5', '2', '次', '後背與肋骨吸飽氣'],
+  ['ATG 關節啟動與末端防護', '脛前肌上提（Tibialis Raise）', '20', '2', '次', '建立腳踝制動與膝蓋防護'],
+  ['ATG 關節啟動與末端防護', '斜板深蹲啟動（Slant Board Squat）', '15', '2', '次', '誘導膝蓋過腳趾、髕骨肌腱溫熱'],
+  ['ATG 關節啟動與末端防護', '大象漫步（Elephant Walk）', '20', '1', '下', '放鬆後側鏈與膕繩肌緊'],
+  ['單側與結締組織補強', 'ATG 分腿蹲（ATG Split Squat）', '8', '3', '下', '每側；完全折疊後腳伸展髖屈肌'],
+  ['單側與結締組織補強', '輔助式北歐挺身（Assisted Nordic Curl）', '5–6', '3', '下', '後側鏈肌腱耐受度'],
+  ['單側與結締組織補強', '壺鈴單手農夫走路', '30', '2', '公尺', '每側；核心抗旋轉'],
+  ['自由重量主項 — 高品質肌力', '俯身啞鈴划船', '8', '3', '下', '主訓練動作'],
+  ['自由重量主項 — 高品質肌力', '滑輪下拉', '8', '3', '下', '主訓練動作'],
+  ['降溫、放鬆與課堂複盤', 'Couch Stretch', '60', '1', '秒', '每側'],
 ];
 
-const makePlan = () => PROGRAM.map((item) => ({ ...item, weight: '', done: false, memo: '' }));
-const seedStudents = [
-  { id: 'demo-1', name: '林安妮', tag: '體驗課 #01', goal: '改善久坐與肩頸僵硬', plan: makePlan(), updatedAt: '今天' },
-  { id: 'demo-2', name: '王子維', tag: '體驗課 #02', goal: '建立下肢力量與膝蓋耐受', plan: makePlan(), updatedAt: '尚未開始' },
+const makePlan = () => PROGRAM.map(([section, name, reps, sets, unit, note]) => ({ section, name, reps, sets, unit, note, weight: '', memo: '' }));
+const initialStudents = [
+  { id: 'demo-1', name: '林安妮', goal: '改善久坐與肩頸僵硬', plan: makePlan() },
+  { id: 'demo-2', name: '王子維', goal: '建立下肢力量與膝蓋耐受', plan: makePlan() },
 ];
 
 function useStudents() {
   const [students, setStudents] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('phoebe-training-students')) || seedStudents; } catch { return seedStudents; }
+    try { return JSON.parse(localStorage.getItem('phoebe-training-students')) || initialStudents; } catch { return initialStudents; }
   });
   useEffect(() => localStorage.setItem('phoebe-training-students', JSON.stringify(students)), [students]);
   return [students, setStudents];
 }
 
-function TrainingApp({ onBooking }) {
-  const [students, setStudents] = useStudents();
-  const [selectedId, setSelectedId] = useState(students[0]?.id || '');
-  const [showNew, setShowNew] = useState(false);
-  const [newStudent, setNewStudent] = useState({ name: '', goal: '' });
-  const student = students.find((item) => item.id === selectedId) || students[0];
-  const groupedPlan = useMemo(() => student?.plan.reduce((groups, item, index) => {
-    (groups[item.section] ||= []).push({ ...item, index }); return groups;
-  }, {}), [student]);
-  const updateExercise = (index, key, value) => setStudents((current) => current.map((item) => item.id !== student.id ? item : {
-    ...item, updatedAt: '剛剛', plan: item.plan.map((exercise, i) => i === index ? { ...exercise, [key]: value } : exercise),
-  }));
-  const addStudent = (event) => {
-    event.preventDefault();
-    if (!newStudent.name.trim()) return;
-    const next = { id: `student-${Date.now()}`, name: newStudent.name.trim(), goal: newStudent.goal.trim() || '尚未設定訓練重點', tag: `體驗課 #${String(students.length + 1).padStart(2, '0')}`, plan: makePlan(), updatedAt: '剛建立' };
-    setStudents((current) => [...current, next]); setSelectedId(next.id); setNewStudent({ name: '', goal: '' }); setShowNew(false);
-  };
-  const resetPlan = () => {
-    if (window.confirm(`要將 ${student.name} 的課表回復為預設組數與次數嗎？已填的重量與備註會清除。`)) setStudents((current) => current.map((item) => item.id === student.id ? { ...item, plan: makePlan(), updatedAt: '剛重設' } : item));
-  };
-  if (!student) return null;
-  return <main className="training-shell">
-    <header className="app-topbar"><a className="brand" href="#training">PHOEBE <span>COACHING</span></a><nav><button className="nav-active" type="button">學員課表</button><button type="button" onClick={onBooking}>體驗課申請</button></nav><div className="coach-avatar" aria-label="Phoebe">P</div></header>
-    <div className="app-layout">
-      <aside className="student-sidebar"><div className="sidebar-label"><span>學員名單</span><button type="button" onClick={() => setShowNew(true)} aria-label="新增學員">＋</button></div><div className="student-list">{students.map((item) => <button key={item.id} type="button" className={`student-item ${item.id === student.id ? 'selected' : ''}`} onClick={() => setSelectedId(item.id)}><span className="student-initial">{item.name.slice(0, 1)}</span><span><strong>{item.name}</strong><small>{item.tag}</small></span></button>)}</div><p className="sidebar-help">每位學員的組數、次數、重量和筆記會分開儲存於此裝置。</p></aside>
-      <section className="program-area"><div className="program-heading"><div><p className="overline">體驗課・90 分鐘</p><h1>{student.name} 的訓練課表</h1><p>{student.goal}</p></div><div className="program-actions"><span className="save-state">● 已儲存</span><button type="button" className="quiet-button" onClick={resetPlan}>回復預設</button></div></div>
-        <div className="session-note"><span>本次課程</span><input aria-label="本次課程日期" type="date" defaultValue={new Date().toISOString().slice(0, 10)} /><textarea placeholder="課前觀察／今天的訓練目標…" /></div>
-        {Object.entries(groupedPlan).map(([section, exercises]) => <section className="program-section" key={section}><h2>{section}</h2><div className="exercise-head"><span>動作</span><span>重量</span><span>次數</span><span>組數</span><span>完成</span></div>{exercises.map((exercise) => <div className={`exercise-row ${exercise.done ? 'is-done' : ''}`} key={exercise.index}><div className="exercise-title"><strong>{exercise.name}</strong><small>{exercise.note}</small><input value={exercise.memo} onChange={(e) => updateExercise(exercise.index, 'memo', e.target.value)} placeholder="訓練備註（選填）" /></div><label className="metric"><input inputMode="decimal" value={exercise.weight} onChange={(e) => updateExercise(exercise.index, 'weight', e.target.value)} placeholder="—" /><span>kg</span></label><label className="metric"><input value={exercise.reps} onChange={(e) => updateExercise(exercise.index, 'reps', e.target.value)} /><span>{exercise.unit}</span></label><label className="metric"><input inputMode="numeric" value={exercise.sets} onChange={(e) => updateExercise(exercise.index, 'sets', e.target.value)} /><span>組</span></label><label className="check-control"><input type="checkbox" checked={exercise.done} onChange={(e) => updateExercise(exercise.index, 'done', e.target.checked)} /><span>完成</span></label></div>)}</section>)}
-        <div className="finish-card"><div><p className="overline">課後紀錄</p><h2>完成今天的訓練</h2><p>已完成 {student.plan.filter((item) => item.done).length}／{student.plan.length} 個動作。</p></div><button type="button" onClick={() => window.alert('本次課表已儲存。下次打開時仍可繼續修改。')}>儲存本次紀錄</button></div>
-      </section>
-    </div>
-    {showNew && <div className="modal-backdrop" role="presentation"><form className="student-modal" onSubmit={addStudent}><button className="modal-close" type="button" onClick={() => setShowNew(false)}>×</button><p className="overline">新增學員</p><h2>建立個別課表</h2><label>學員姓名<input autoFocus value={newStudent.name} onChange={(e) => setNewStudent((prev) => ({ ...prev, name: e.target.value }))} placeholder="例如：陳小美" /></label><label>本次重點<input value={newStudent.goal} onChange={(e) => setNewStudent((prev) => ({ ...prev, goal: e.target.value }))} placeholder="例如：肩頸放鬆、下肢穩定" /></label><button type="submit">建立課表</button></form></div>}
-  </main>;
+function StudentModal({ mode, student, onClose, onSave }) {
+  const [form, setForm] = useState({ name: student?.name || '', goal: student?.goal || '' });
+  const submit = (event) => { event.preventDefault(); if (form.name.trim()) onSave({ name: form.name.trim(), goal: form.goal.trim() || '尚未設定訓練重點' }); };
+  return <div className="modal-backdrop"><form className="student-modal" onSubmit={submit}><button className="modal-close" type="button" onClick={onClose} aria-label="關閉">×</button><p className="overline">{mode === 'new' ? '新增學員' : '編輯學員'}</p><h2>{mode === 'new' ? '建立個別課表' : '更新學員資料'}</h2><label>學員姓名<input autoFocus value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} placeholder="例如：陳小美" /></label><label>本次訓練重點<input value={form.goal} onChange={(e) => setForm((prev) => ({ ...prev, goal: e.target.value }))} placeholder="例如：肩頸放鬆、下肢穩定" /></label><button type="submit">{mode === 'new' ? '建立課表' : '儲存修改'}</button></form></div>;
 }
 
-const initialForm = { name: '', phone: '', line: '', birthday: '', gender: '', work: '', workOther: '', sleep: '', condition: '', conditionNote: '', symptoms: '', injuries: [], injuryNote: '', pregnancy: '', exerciseFrequency: '', activities: [], coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: '', timeOther: '', message: '' };
-const choices = { gender: ['男', '女', '不願透露'], work: ['久坐辦公（每日坐姿超過 6 小時）', '長時間站立或走動', '重體力或高活動量工作', '其他'], sleep: ['未滿 5 小時', '5～6 小時', '6～8 小時', '8 小時以上'], condition: ['否', '是（請於下方說明）'], symptoms: ['否', '是'], injuries: ['無任何舊傷或疼痛', '頸部／肩部', '下背／腰部', '膝蓋', '腳踝', '其他關節或手術史'], pregnancy: ['否', '是（懷孕中）', '是（產後半年內）'], exerciseFrequency: ['幾乎沒有（0 天）', '1～2 天', '3～4 天', '5 天以上'], activities: ['肌力／重量訓練（器械或自由重量）', '跑步／單車／游泳等耐力有氧', '團體有氧課（如飛輪、Les Mills、HIIT）', '瑜伽／皮拉提斯／伸展', '球類運動／登山攀岩', '尚無固定項目'], coaching: ['否，這是第一次', '是，半年以內曾上過', '是，已是一年以前'], barriers: ['缺乏動力與自律，難以持續', '不清楚正確動作，容易受傷或代償疼痛', '自行排課／飲食效果不明顯，進入瓶頸', '時間難以安排', '其他'], focus: ['身體組成與動作活動度檢測評估', '完整的個人化課表訓練體驗', '長期訓練規劃諮詢'], frequency: ['每週 1 次', '每週 2 次', '每週 3 次以上', '先體驗看看，暫不確定'], time: ['平日白天（09:00－17:00）', '平日晚上（18:00－22:00）', '週末假日（全日）', '其他'] };
-function ChoiceGroup({ name, label, options, value, onChange, multiple = false, required = true, otherKey, form, error }) { const selected = multiple ? value : [value]; const toggle = (option) => !multiple ? onChange(name, option) : onChange(name, selected.includes(option) ? selected.filter((item) => item !== option) : [...selected, option]); const hasOther = selected.some((item) => item === '其他' || item.includes('其他關節')); return <section className={`form-section ${error ? 'has-error' : ''}`} data-field={name}><fieldset><legend>{label}{required && <span className="required">＊</span>}</legend><div className="choice-list">{options.map((option) => <label className="choice" key={option}><input type={multiple ? 'checkbox' : 'radio'} name={name} checked={selected.includes(option)} onChange={() => toggle(option)} /><span>{option}</span></label>)}</div>{hasOther && otherKey && <input className="other-input" value={form[otherKey]} onChange={(event) => onChange(otherKey, event.target.value)} placeholder="請補充說明" />}{error && <p className="field-error" role="alert">{error}</p>}</fieldset></section>; }
-function BookingForm({ onTraining }) { const [form, setForm] = useState(initialForm); const [submitted, setSubmitted] = useState(false); const [submitError, setSubmitError] = useState(''); const [errors, setErrors] = useState({}); const update = (key, value) => setForm((previous) => ({ ...previous, [key]: value })); const submit = (event) => { event.preventDefault(); setSubmitError(''); const nextErrors = {}; const requiredFields = ['name', 'phone', 'line', 'birthday', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exerciseFrequency', 'activities', 'coaching', 'barriers', 'focus', 'frequency', 'time']; if (form.gender === '女') requiredFields.push('pregnancy'); if (form.work === '其他') requiredFields.push('workOther'); if (form.condition.startsWith('是')) requiredFields.push('conditionNote'); if (form.injuries.some((item) => item.includes('其他關節'))) requiredFields.push('injuryNote'); if (form.barriers.includes('其他')) requiredFields.push('barrierOther'); if (form.time === '其他') requiredFields.push('timeOther'); requiredFields.forEach((key) => { const value = form[key]; if (!value || (Array.isArray(value) && value.length === 0) || (typeof value === 'string' && value.trim() === '')) nextErrors[key] = '此欄位為必填，請完成後再送出。'; }); if (Object.keys(nextErrors).length) { setErrors(nextErrors); setSubmitError('請完成所有必填欄位。'); requestAnimationFrame(() => document.querySelector(`[data-field="${Object.keys(nextErrors)[0]}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })); return; } setErrors({}); if (!GOOGLE_APPS_SCRIPT_URL) { setSubmitError('表單收件功能尚未完成設定，請稍後再試。'); return; } const payload = JSON.stringify(form); const queued = navigator.sendBeacon?.(GOOGLE_APPS_SCRIPT_URL, new Blob([payload], { type: 'text/plain;charset=UTF-8' })); if (!queued) fetch(GOOGLE_APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: payload, keepalive: true }).catch(() => {}); setSubmitted(true); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-  if (submitted) return <main className="page"><div className="success-card"><p className="eyebrow">預約資料已送出</p><h1>謝謝你，{form.name || '學員'}！</h1><p>我會透過你提供的 LINE ID 與你確認體驗課時間。</p><button type="button" onClick={() => setSubmitted(false)}>返回表單</button></div></main>;
-  return <main className="page"><header className="booking-top"><button type="button" onClick={onTraining}>← 教練課表</button></header><header className="hero"><div className="hero-mark" aria-hidden="true"></div><p className="eyebrow">PHOEBE PERSONAL TRAINING</p><h1>一對一教學體驗課<br /><em>體驗價｜90 分鐘・NT$1,500</em></h1><p className="hero-copy">訓練不該是生活的負擔，而是讓生活更輕鬆的工具。歡迎預約體驗課，一起找出最適合你的動作模式！</p></header><form onSubmit={submit} noValidate><section className="intro-card"><p className="section-kicker">開始前的小問卷</p><h2>讓第一次見面，更貼近你的需要。</h2><p>以下資料僅用於安排體驗課與調整訓練內容。標示 <span className="required">＊</span> 的欄位為必填。</p></section><div className="form-grid"><section className={`form-section ${errors.name ? 'has-error' : ''}`} data-field="name"><label>姓名<span className="required">＊</span><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="請輸入姓名" /></label>{errors.name && <p className="field-error">{errors.name}</p>}</section><section className={`form-section ${errors.phone ? 'has-error' : ''}`} data-field="phone"><label>聯絡電話<span className="required">＊</span><input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.phone && <p className="field-error">{errors.phone}</p>}</section></div><section className={`form-section ${errors.line ? 'has-error' : ''}`} data-field="line"><label>LINE ID<span className="required">＊</span><input value={form.line} onChange={(e) => update('line', e.target.value)} placeholder="請輸入 LINE ID" /></label></section><section className={`form-section ${errors.birthday ? 'has-error' : ''}`} data-field="birthday"><label>生日<span className="required">＊</span><input type="date" value={form.birthday} onChange={(e) => update('birthday', e.target.value)} /></label></section><ChoiceGroup name="gender" label="性別" options={choices.gender} value={form.gender} onChange={update} error={errors.gender} /><ChoiceGroup name="work" label="日常工作型態" options={choices.work} value={form.work} onChange={update} otherKey="workOther" form={form} error={errors.work || errors.workOther} /><ChoiceGroup name="sleep" label="平均每日睡眠時間" options={choices.sleep} value={form.sleep} onChange={update} error={errors.sleep} /><div className="section-heading"><p className="section-kicker">健康與運動背景</p><h2>先了解身體現在的狀態</h2></div><ChoiceGroup name="condition" label="是否曾有醫師診斷患有心血管疾病、高血壓、氣喘或其他慢性疾病？" options={choices.condition} value={form.condition} onChange={update} error={errors.condition} />{form.condition.startsWith('是') && <section className={`form-section ${errors.conditionNote ? 'has-error' : ''}`} data-field="conditionNote"><label>慢性疾病說明<span className="required">＊</span><textarea value={form.conditionNote} onChange={(e) => update('conditionNote', e.target.value)} placeholder="請簡述診斷、目前感受或需注意事項" /></label></section>}<ChoiceGroup name="symptoms" label="運動中或日常靜止時，是否曾出現胸悶、胸痛、呼吸困難或頭暈眩暈？" options={choices.symptoms} value={form.symptoms} onChange={update} error={errors.symptoms} /><ChoiceGroup name="injuries" label="過去或目前是否有骨骼肌肉舊傷、關節問題或脊椎不適？" options={choices.injuries} value={form.injuries} onChange={update} multiple otherKey="injuryNote" form={form} error={errors.injuries} /><section className="form-section" data-field="injuryNote"><label>受傷時間、目前感受或限制<span className="required">＊</span><textarea value={form.injuryNote} onChange={(e) => update('injuryNote', e.target.value)} placeholder="若無，請填「無」" /></label></section><ChoiceGroup name="exerciseFrequency" label="目前每週平均運動頻率" options={choices.exerciseFrequency} value={form.exerciseFrequency} onChange={update} error={errors.exerciseFrequency} /><ChoiceGroup name="activities" label="平常最常進行的運動項目？（可複選）" options={choices.activities} value={form.activities} onChange={update} multiple error={errors.activities} /><ChoiceGroup name="coaching" label="過去是否曾購買或上過一對一私人教練課？" options={choices.coaching} value={form.coaching} onChange={update} error={errors.coaching} /><ChoiceGroup name="barriers" label="過去在運動或維持體態上，遇到的最大困難是什麼？" options={choices.barriers} value={form.barriers} onChange={update} multiple otherKey="barrierOther" form={form} error={errors.barriers || errors.barrierOther} /><div className="section-heading"><p className="section-kicker">體驗課期待</p><h2>一起安排最適合你的開始</h2></div><ChoiceGroup name="focus" label="體驗課最希望教練重點協助您的是？" options={choices.focus} value={form.focus} onChange={update} error={errors.focus} /><ChoiceGroup name="frequency" label="若體驗後感覺符合需求，未來每週預計可配合的上課頻率？" options={choices.frequency} value={form.frequency} onChange={update} error={errors.frequency} /><ChoiceGroup name="time" label="方便安排上課的常見時段" options={choices.time} value={form.time} onChange={update} otherKey="timeOther" form={form} error={errors.time || errors.timeOther} /><section className="form-section"><label>想對教練說的話<small>選填</small><textarea value={form.message} onChange={(e) => update('message', e.target.value)} placeholder="有任何期待、疑問或想先讓教練知道的事，都可以寫在這裡。" /></label></section><div className="submit-area"><p>送出後，Phoebe 將以 LINE 聯繫您確認課程。</p>{submitError && <p className="submit-error" role="alert">{submitError}</p>}<button type="submit">送出體驗課申請</button></div></form></main>; }
-export function App() { const [view, setView] = useState('training'); return view === 'training' ? <TrainingApp onBooking={() => setView('booking')} /> : <BookingForm onTraining={() => setView('training')} />; }
+export function App() {
+  const [students, setStudents] = useStudents();
+  const [selectedId, setSelectedId] = useState(students[0]?.id || '');
+  const [modal, setModal] = useState('');
+  const student = students.find((item) => item.id === selectedId) || students[0];
+  const groupedPlan = useMemo(() => student?.plan.reduce((groups, item, index) => { (groups[item.section] ||= []).push({ ...item, index }); return groups; }, {}), [student]);
+  const updateExercise = (index, key, value) => setStudents((items) => items.map((item) => item.id === student.id ? { ...item, plan: item.plan.map((exercise, i) => i === index ? { ...exercise, [key]: value } : exercise) } : item));
+  const saveStudent = (form) => {
+    if (modal === 'new') { const next = { id: `student-${Date.now()}`, ...form, plan: makePlan() }; setStudents((items) => [...items, next]); setSelectedId(next.id); }
+    else setStudents((items) => items.map((item) => item.id === student.id ? { ...item, ...form } : item));
+    setModal('');
+  };
+  const deleteStudent = () => {
+    if (!window.confirm(`確定刪除「${student.name}」及其所有訓練紀錄嗎？`)) return;
+    const remaining = students.filter((item) => item.id !== student.id);
+    setStudents(remaining); setSelectedId(remaining[0]?.id || '');
+  };
+  if (!student) return <main className="empty-state"><h1>先新增第一位學員</h1><button onClick={() => setModal('new')}>＋ 新增學員</button>{modal && <StudentModal mode="new" onClose={() => setModal('')} onSave={saveStudent} />}</main>;
+  return <main className="training-shell">
+    <header className="app-topbar"><a className="brand" href="#top">PHOEBE <span>COACHING</span></a><span className="topbar-title">學員課表</span><div className="coach-avatar">P</div></header>
+    <div className="app-layout" id="top">
+      <aside className="student-sidebar"><div className="sidebar-label"><span>學員名單</span><button type="button" onClick={() => setModal('new')} aria-label="新增學員">＋</button></div><div className="student-list">{students.map((item) => <button key={item.id} type="button" className={`student-item ${item.id === student.id ? 'selected' : ''}`} onClick={() => setSelectedId(item.id)}><span className="student-initial">{item.name.slice(0, 1)}</span><strong>{item.name}</strong></button>)}</div></aside>
+      <section className="program-area"><div className="program-heading"><div><p className="overline">體驗課・90 分鐘</p><h1>{student.name} 的訓練課表</h1><p>{student.goal}</p></div><div className="program-actions"><button type="button" className="quiet-button" onClick={() => setModal('edit')}>編輯學員</button><button type="button" className="delete-button" onClick={deleteStudent}>刪除</button></div></div>
+        <div className="session-note"><span>本次課程</span><input aria-label="本次課程日期" type="date" defaultValue={new Date().toISOString().slice(0, 10)} /><textarea placeholder="課前觀察／今天的訓練目標…" /></div>
+        {Object.entries(groupedPlan).map(([section, exercises]) => <section className="program-section" key={section}><h2>{section}</h2><div className="exercise-head"><span>動作</span><span>重量</span><span>次數</span><span>組數</span></div>{exercises.map((exercise) => <div className="exercise-row" key={exercise.index}><div className="exercise-title"><strong>{exercise.name}</strong><small>{exercise.note}</small><input value={exercise.memo} onChange={(e) => updateExercise(exercise.index, 'memo', e.target.value)} placeholder="訓練備註（選填）" /></div><label className="metric"><input inputMode="decimal" value={exercise.weight} onChange={(e) => updateExercise(exercise.index, 'weight', e.target.value)} placeholder="—" /><span>kg</span></label><label className="metric"><input value={exercise.reps} onChange={(e) => updateExercise(exercise.index, 'reps', e.target.value)} /><span>{exercise.unit}</span></label><label className="metric"><input inputMode="numeric" value={exercise.sets} onChange={(e) => updateExercise(exercise.index, 'sets', e.target.value)} /><span>組</span></label></div>)}</section>)}
+        <div className="finish-card"><div><p className="overline">自動儲存</p><h2>隨時調整，立即保留</h2><p>重量、次數、組數和備註會儲存在此手機／瀏覽器。</p></div></div>
+      </section>
+    </div>
+    {modal && <StudentModal mode={modal} student={modal === 'edit' ? student : null} onClose={() => setModal('')} onSave={saveStudent} />}
+  </main>;
+}
