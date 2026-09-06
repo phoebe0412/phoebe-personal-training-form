@@ -53,8 +53,8 @@ fieldset { padding: 0; margin: 0; border: 0; } .choice-list { display: grid; gap
 @media (max-width: 580px) { .topbar-title { font-size: 12px; }.program-heading h1 { font-size: 30px; }.exercise-row { grid-template-columns: 1fr 72px 62px 52px; }.app-topbar nav { display: none; } }
 
 .section-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }.section-title h2 { margin: 0; }.section-title button { border: 0; background: transparent; color: #48715e; cursor: pointer; font-size: 12px; font-weight: 700; }
-.exercise-head, .exercise-row { grid-template-columns: minmax(210px, 1fr) 100px 92px 82px 27px; }.exercise-head span:last-child { grid-column: 4; }
+.exercise-head, .exercise-row { grid-template-columns: minmax(210px, 1fr) 100px 92px 82px 78px; }.exercise-head span:last-child { grid-column: 4; }
 .exercise-title .exercise-name { display: block; width: 100%; border: 0; border-bottom: 1px solid #e9eee9; padding: 0 0 4px; color: #27352f; outline: none; font-size: 14px; font-weight: 700; }.exercise-title .exercise-name:focus { border-color: #91afa0; }
-.delete-exercise { width: 24px; height: 24px; border: 0; border-radius: 5px; background: transparent; color: #b07872; cursor: pointer; font-size: 19px; line-height: 1; }.delete-exercise:hover { background: #fbefed; }
-@media (max-width: 850px) { .exercise-head, .exercise-row { grid-template-columns: minmax(190px, 1fr) 75px 70px 64px 25px; } }
-@media (max-width: 580px) { .exercise-row { grid-template-columns: 1fr 68px 58px 48px 23px; }.exercise-title { grid-column: 1 / -1; }.delete-exercise { padding: 0; } }
+.row-controls { display: flex; align-items: center; justify-content: flex-end; gap: 1px; }.row-controls button { width: 24px; height: 24px; border: 0; border-radius: 5px; background: transparent; color: #60746a; cursor: pointer; font-size: 15px; line-height: 1; }.row-controls button:hover:not(:disabled) { background: #eff4ef; }.row-controls button:disabled { cursor: default; color: #d4dad5; }.row-controls .delete-exercise { color: #b07872; font-size: 19px; }.row-controls .delete-exercise:hover { background: #fbefed; }
+@media (max-width: 850px) { .exercise-head, .exercise-row { grid-template-columns: minmax(190px, 1fr) 75px 70px 64px 72px; } }
+@media (max-width: 580px) { .exercise-row { grid-template-columns: 1fr 65px 56px 46px 70px; }.exercise-title { grid-column: 1 / -1; } }
