@@ -23,7 +23,7 @@ const choices = {
   time: ['平日白天（09:00－17:00）', '平日晚上（18:00－22:00）', '週末假日（全日）', '其他'],
 };
 
-function ChoiceGroup({ name, label, options, value, onChange, multiple = false, required = false, otherKey, form }) {
+function ChoiceGroup({ name, label, options, value, onChange, multiple = false, required = true, otherKey, form, error }) {
   const selected = multiple ? value : [value];
   const toggle = (option) => {
     if (!multiple) return onChange(name, option);
@@ -31,7 +31,7 @@ function ChoiceGroup({ name, label, options, value, onChange, multiple = false, 
   };
   const hasOther = selected.some((item) => item === '其他' || item.includes('其他關節'));
   return (
-    <section className="form-section">
+    <section className={`form-section ${error ? 'has-error' : ''}`} data-field={name}>
       <fieldset>
         <legend>{label}{required && <span className="required">＊</span>}</legend>
         <div className="choice-list">
@@ -43,6 +43,7 @@ function ChoiceGroup({ name, label, options, value, onChange, multiple = false, 
           ))}
         </div>
         {hasOther && otherKey && <input className="other-input" value={form[otherKey]} onChange={(event) => onChange(otherKey, event.target.value)} placeholder="請補充說明" />}
+        {error && <p className="field-error" role="alert">{error}</p>}
       </fieldset>
     </section>
   );
@@ -53,10 +54,30 @@ export function App() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
   const update = (key, value) => setForm((previous) => ({ ...previous, [key]: value }));
   const submit = async (event) => {
     event.preventDefault();
     setSubmitError('');
+    const nextErrors = {};
+    const requiredFields = ['name', 'phone', 'line', 'birthday', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exercise', 'coaching', 'barriers', 'focus', 'frequency', 'time'];
+    if (form.gender === '女') requiredFields.push('pregnancy');
+    if (form.work === '其他') requiredFields.push('workOther');
+    if (form.condition.startsWith('是')) requiredFields.push('conditionNote');
+    if (form.injuries.some((item) => item.includes('其他關節'))) requiredFields.push('injuryNote');
+    if (form.barriers.includes('其他')) requiredFields.push('barrierOther');
+    if (form.time === '其他') requiredFields.push('timeOther');
+    requiredFields.forEach((key) => {
+      const value = form[key];
+      if (!value || (Array.isArray(value) && value.length === 0) || (typeof value === 'string' && value.trim() === '')) nextErrors[key] = '此欄位為必填，請完成後再送出。';
+    });
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
+      setSubmitError('請完成所有必填欄位。');
+      requestAnimationFrame(() => document.querySelector(`[data-field="${Object.keys(nextErrors)[0]}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+      return;
+    }
+    setErrors({});
     if (!GOOGLE_APPS_SCRIPT_URL) {
       setSubmitError('表單收件功能尚未完成設定，請稍後再試。');
       return;
@@ -92,33 +113,33 @@ export function App() {
       <p className="hero-copy">訓練不該是生活的負擔，而是讓生活更輕鬆的工具。歡迎預約體驗課，一起找出最適合你的動作模式！</p>
     </header>
 
-    <form onSubmit={submit}>
+    <form onSubmit={submit} noValidate>
       <section className="intro-card"><p className="section-kicker">開始前的小問卷</p><h2>讓第一次見面，更貼近你的需要。</h2><p>以下資料僅用於安排體驗課與調整訓練內容。標示 <span className="required">＊</span> 的欄位為必填。</p></section>
       <div className="form-grid">
-        <section className="form-section"><label>姓名<span className="required">＊</span><input required value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="請輸入姓名" /></label></section>
-        <section className="form-section"><label>聯絡電話<span className="required">＊</span><input required type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="例如：0912 345 678" /></label></section>
-        <section className="form-section"><label>LINE ID<span className="required">＊</span><small>方便後續傳送預約確認與提醒</small><input required value={form.line} onChange={(e) => update('line', e.target.value)} placeholder="請輸入 LINE ID" /></label></section>
-        <section className="form-section"><label>生日<span className="required">＊</span><input required type="date" value={form.birthday} onChange={(e) => update('birthday', e.target.value)} /></label></section>
+        <section className={`form-section ${errors.name ? 'has-error' : ''}`} data-field="name"><label>姓名<span className="required">＊</span><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="請輸入姓名" /></label>{errors.name && <p className="field-error">{errors.name}</p>}</section>
+        <section className={`form-section ${errors.phone ? 'has-error' : ''}`} data-field="phone"><label>聯絡電話<span className="required">＊</span><input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.phone && <p className="field-error">{errors.phone}</p>}</section>
+        <section className={`form-section ${errors.line ? 'has-error' : ''}`} data-field="line"><label>LINE ID<span className="required">＊</span><small>方便後續傳送預約確認與提醒</small><input value={form.line} onChange={(e) => update('line', e.target.value)} placeholder="請輸入 LINE ID" /></label>{errors.line && <p className="field-error">{errors.line}</p>}</section>
+        <section className={`form-section ${errors.birthday ? 'has-error' : ''}`} data-field="birthday"><label>生日<span className="required">＊</span><input type="date" value={form.birthday} onChange={(e) => update('birthday', e.target.value)} /></label>{errors.birthday && <p className="field-error">{errors.birthday}</p>}</section>
       </div>
-      <ChoiceGroup name="gender" label="性別" options={choices.gender} value={form.gender} onChange={update} required />
-      <ChoiceGroup name="work" label="日常工作型態" options={choices.work} value={form.work} onChange={update} otherKey="workOther" form={form} />
-      <ChoiceGroup name="sleep" label="平均每日睡眠時間" options={choices.sleep} value={form.sleep} onChange={update} />
+      <ChoiceGroup name="gender" label="性別" options={choices.gender} value={form.gender} onChange={update} error={errors.gender} />
+      <ChoiceGroup name="work" label="日常工作型態" options={choices.work} value={form.work} onChange={update} otherKey="workOther" form={form} error={errors.work || errors.workOther} />
+      <ChoiceGroup name="sleep" label="平均每日睡眠時間" options={choices.sleep} value={form.sleep} onChange={update} error={errors.sleep} />
 
       <div className="section-heading"><p className="section-kicker">健康與運動背景</p><h2>先了解身體現在的狀態</h2></div>
-      <ChoiceGroup name="condition" label="是否曾有醫師診斷患有心血管疾病、高血壓、氣喘或其他慢性疾病？" options={choices.condition} value={form.condition} onChange={update} />
-      {form.condition.startsWith('是') && <section className="form-section"><label>慢性疾病說明<textarea value={form.conditionNote} onChange={(e) => update('conditionNote', e.target.value)} placeholder="請簡述診斷、目前感受或需注意事項" /></label></section>}
-      <ChoiceGroup name="symptoms" label="運動中或日常靜止時，是否曾出現胸悶、胸痛、呼吸困難或頭暈眩暈？" options={choices.symptoms} value={form.symptoms} onChange={update} />
-      <ChoiceGroup name="injuries" label="過去或目前是否有骨骼肌肉舊傷、關節問題或脊椎不適？" options={choices.injuries} value={form.injuries} onChange={update} multiple otherKey="injuryNote" form={form} />
-      <section className="form-section"><label>受傷時間、目前感受或限制<textarea value={form.injuryNote} onChange={(e) => update('injuryNote', e.target.value)} placeholder="若無，請填「無」" /></label></section>
-      <ChoiceGroup name="pregnancy" label="目前是否懷孕或產後半年內？（女性填寫）" options={choices.pregnancy} value={form.pregnancy} onChange={update} />
-      <ChoiceGroup name="exercise" label="目前規律運動經驗" options={choices.exercise} value={form.exercise} onChange={update} multiple />
-      <ChoiceGroup name="coaching" label="過去是否曾購買或上過一對一私人教練課？" options={choices.coaching} value={form.coaching} onChange={update} />
-      <ChoiceGroup name="barriers" label="過去在運動或維持體態上，遇到的最大困難是什麼？" options={choices.barriers} value={form.barriers} onChange={update} multiple otherKey="barrierOther" form={form} />
+      <ChoiceGroup name="condition" label="是否曾有醫師診斷患有心血管疾病、高血壓、氣喘或其他慢性疾病？" options={choices.condition} value={form.condition} onChange={update} error={errors.condition} />
+      {form.condition.startsWith('是') && <section className={`form-section ${errors.conditionNote ? 'has-error' : ''}`} data-field="conditionNote"><label>慢性疾病說明<span className="required">＊</span><textarea value={form.conditionNote} onChange={(e) => update('conditionNote', e.target.value)} placeholder="請簡述診斷、目前感受或需注意事項" /></label>{errors.conditionNote && <p className="field-error">{errors.conditionNote}</p>}</section>}
+      <ChoiceGroup name="symptoms" label="運動中或日常靜止時，是否曾出現胸悶、胸痛、呼吸困難或頭暈眩暈？" options={choices.symptoms} value={form.symptoms} onChange={update} error={errors.symptoms} />
+      <ChoiceGroup name="injuries" label="過去或目前是否有骨骼肌肉舊傷、關節問題或脊椎不適？" options={choices.injuries} value={form.injuries} onChange={update} multiple otherKey="injuryNote" form={form} error={errors.injuries} />
+      <section className={`form-section ${errors.injuryNote ? 'has-error' : ''}`} data-field="injuryNote"><label>受傷時間、目前感受或限制<span className="required">＊</span><textarea value={form.injuryNote} onChange={(e) => update('injuryNote', e.target.value)} placeholder="若無，請填「無」" /></label>{errors.injuryNote && <p className="field-error">{errors.injuryNote}</p>}</section>
+      {form.gender === '女' && <ChoiceGroup name="pregnancy" label="目前是否懷孕或產後半年內？（女性填寫）" options={choices.pregnancy} value={form.pregnancy} onChange={update} error={errors.pregnancy} />}
+      <ChoiceGroup name="exercise" label="目前規律運動經驗" options={choices.exercise} value={form.exercise} onChange={update} multiple error={errors.exercise} />
+      <ChoiceGroup name="coaching" label="過去是否曾購買或上過一對一私人教練課？" options={choices.coaching} value={form.coaching} onChange={update} error={errors.coaching} />
+      <ChoiceGroup name="barriers" label="過去在運動或維持體態上，遇到的最大困難是什麼？" options={choices.barriers} value={form.barriers} onChange={update} multiple otherKey="barrierOther" form={form} error={errors.barriers || errors.barrierOther} />
 
       <div className="section-heading"><p className="section-kicker">體驗課期待</p><h2>一起安排最適合你的開始</h2></div>
-      <ChoiceGroup name="focus" label="體驗課最希望教練重點協助您的是？" options={choices.focus} value={form.focus} onChange={update} />
-      <ChoiceGroup name="frequency" label="若體驗後感覺符合需求，未來每週預計可配合的上課頻率？" options={choices.frequency} value={form.frequency} onChange={update} />
-      <ChoiceGroup name="time" label="方便安排上課的常見時段" options={choices.time} value={form.time} onChange={update} otherKey="timeOther" form={form} />
+      <ChoiceGroup name="focus" label="體驗課最希望教練重點協助您的是？" options={choices.focus} value={form.focus} onChange={update} error={errors.focus} />
+      <ChoiceGroup name="frequency" label="若體驗後感覺符合需求，未來每週預計可配合的上課頻率？" options={choices.frequency} value={form.frequency} onChange={update} error={errors.frequency} />
+      <ChoiceGroup name="time" label="方便安排上課的常見時段" options={choices.time} value={form.time} onChange={update} otherKey="timeOther" form={form} error={errors.time || errors.timeOther} />
       <div className="submit-area"><p>送出後，Phoebe 將以 LINE 聯繫您確認課程。</p>{submitError && <p className="submit-error" role="alert">{submitError}</p>}<button type="submit" disabled={isSubmitting}>{isSubmitting ? '資料送出中…' : '送出體驗課申請'}</button></div>
     </form>
   </main>;
