@@ -6,11 +6,13 @@ const BOOKING_SPREADSHEET_ID = '138Q4dDxKz5hY20vp1C1f6HZltPLh_02nJkgj3Xe8-eU';
 const BOOKING_SHEET_NAME = 'Sheet1';
 const TRAINING_SPREADSHEET_ID = '1C1MKQ5ri9HvFkXBagx4-QdGSir_Eo11tKSs5UHjr5f4';
 const TRAINING_SHEET_NAME = '學員訓練紀錄';
+const SESSION_SHEET_NAME = '上課紀錄';
 
 function doPost(e) {
   try {
     const payload = JSON.parse(e.postData.contents || '{}');
-    if (payload.action === 'replaceTraining') return saveTraining(payload.student);
+    if (payload.action === 'appendTraining') return appendTraining(payload.student);
+    if (payload.action === 'appendSession') return appendSession(payload.session);
     return saveBooking(payload);
   } catch (error) {
     return response({ ok: false, error: error.message });
@@ -34,19 +36,10 @@ function saveBooking(payload) {
   return response({ ok: true });
 }
 
-function saveTraining(student) {
+function appendTraining(student) {
   if (!student || !student.id || !student.name) throw new Error('缺少學員資料。');
   const sheet = SpreadsheetApp.openById(TRAINING_SPREADSHEET_ID).getSheetByName(TRAINING_SHEET_NAME);
   if (!sheet) throw new Error(`找不到「${TRAINING_SHEET_NAME}」工作表。`);
-
-  // 清除同一位學員上一版課表，保持試算表內容與 app 目前課表一致。
-  const lastRow = sheet.getLastRow();
-  if (lastRow > 1) {
-    const ids = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
-    for (let row = ids.length - 1; row >= 0; row -= 1) {
-      if (ids[row][0] === student.id) sheet.deleteRow(row + 2);
-    }
-  }
 
   const now = new Date();
   const rows = (student.plan || []).map((exercise, index) => [
@@ -55,6 +48,16 @@ function saveTraining(student) {
   ]);
   if (rows.length) sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, 10).setValues(rows);
   return response({ ok: true, rowCount: rows.length });
+}
+
+function appendSession(session) {
+  const sheet = SpreadsheetApp.openById(TRAINING_SPREADSHEET_ID).getSheetByName(SESSION_SHEET_NAME);
+  if (!sheet) throw new Error(`找不到「${SESSION_SHEET_NAME}」工作表。`);
+  if (!session || !session.id || !session.date || !session.time) throw new Error('缺少上課日期、時間或課程 ID。');
+  const rows = sheet.getLastRow() > 1 ? sheet.getRange(2, 3, sheet.getLastRow() - 1, 1).getValues().flat() : [];
+  if (rows.includes(session.id)) return response({ ok: true, alreadyExists: true });
+  sheet.appendRow([session.date, session.time, session.id, session.studentId || '', session.studentName || '', session.goal || '']);
+  return response({ ok: true });
 }
 
 function listValue(value) {

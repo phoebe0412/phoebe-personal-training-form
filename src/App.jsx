@@ -30,6 +30,14 @@ function useStudents() {
   return [students, setStudents];
 }
 
+function useSessions() {
+  const [sessions, setSessions] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('phoebe-training-sessions')) || []; } catch { return []; }
+  });
+  useEffect(() => localStorage.setItem('phoebe-training-sessions', JSON.stringify(sessions)), [sessions]);
+  return [sessions, setSessions];
+}
+
 function StudentModal({ mode, student, onClose, onSave }) {
   const [form, setForm] = useState({ name: student?.name || '', goal: student?.goal || '' });
   const submit = (event) => { event.preventDefault(); if (form.name.trim()) onSave({ name: form.name.trim(), goal: form.goal.trim() || '尚未設定訓練重點' }); };
@@ -38,8 +46,11 @@ function StudentModal({ mode, student, onClose, onSave }) {
 
 export function App() {
   const [students, setStudents] = useStudents();
+  const [sessions, setSessions] = useSessions();
   const [selectedId, setSelectedId] = useState(students[0]?.id || '');
   const [modal, setModal] = useState('');
+  const [view, setView] = useState('training');
+  const [sessionDraft, setSessionDraft] = useState(() => ({ id: `session-${Date.now()}`, date: new Date().toISOString().slice(0, 10), time: '10:00' }));
   const student = students.find((item) => item.id === selectedId) || students[0];
   const groupedPlan = useMemo(() => student?.plan.reduce((groups, item, index) => { (groups[item.section] ||= []).push({ ...item, index }); return groups; }, {}), [student]);
   const [saveState, setSaveState] = useState('');
@@ -55,9 +66,15 @@ export function App() {
   }));
   const saveToSheets = async () => {
     setSaveState('儲存中…');
+    const nextSession = { ...sessionDraft, studentId: student.id, studentName: student.name, goal: student.goal };
+    setSessions((items) => [...items.filter((item) => item.id !== nextSession.id), nextSession]);
+    setSessionDraft({ id: `session-${Date.now()}`, date: sessionDraft.date, time: sessionDraft.time });
     if (!TRAINING_SYNC_URL) { setSaveState('已儲存於本機'); return; }
     try {
-      await fetch(TRAINING_SYNC_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'replaceTraining', student }) });
+      await Promise.all([
+        fetch(TRAINING_SYNC_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'appendTraining', student }) }),
+        fetch(TRAINING_SYNC_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'appendSession', session: nextSession }) }),
+      ]);
       setSaveState('已同步至 Google Sheets');
     } catch { setSaveState('已儲存於本機；Google Sheets 同步失敗'); }
   };
@@ -72,16 +89,18 @@ export function App() {
     setStudents(remaining); setSelectedId(remaining[0]?.id || '');
   };
   if (!student) return <main className="empty-state"><h1>先新增第一位學員</h1><button onClick={() => setModal('new')}>＋ 新增學員</button>{modal && <StudentModal mode="new" onClose={() => setModal('')} onSave={saveStudent} />}</main>;
+  const sortedSessions = [...sessions].sort((a, b) => `${b.date}${b.time}`.localeCompare(`${a.date}${a.time}`));
   return <main className="training-shell">
-    <header className="app-topbar"><a className="brand" href="#top">PHOEBE <span>COACHING</span></a><span className="topbar-title">學員課表</span><div className="coach-avatar">P</div></header>
+    <header className="app-topbar"><a className="brand" href="#top">PHOEBE <span>COACHING</span></a><nav className="app-tabs"><button className={view === 'training' ? 'nav-active' : ''} type="button" onClick={() => setView('training')}>課表</button><button className={view === 'calendar' ? 'nav-active' : ''} type="button" onClick={() => setView('calendar')}>行事曆</button></nav><div className="coach-avatar">P</div></header>
+    {view === 'calendar' ? <section className="calendar-page"><div className="calendar-heading"><div><p className="overline">上課紀錄</p><h1>學員行事曆</h1></div><span>{sessions.length} 堂課</span></div>{sortedSessions.length ? <div className="session-list">{sortedSessions.map((session) => <article className="session-card" key={session.id}><time><strong>{new Date(`${session.date}T00:00:00`).toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric' })}</strong><span>{new Date(`${session.date}T00:00:00`).toLocaleDateString('zh-TW', { weekday: 'short' })}</span></time><div><h2>{session.studentName}</h2><p>{session.time} ・ {session.goal}</p></div><button type="button" onClick={() => setSessions((items) => items.filter((item) => item.id !== session.id))} aria-label="刪除課程紀錄">×</button></article>)}</div> : <div className="calendar-empty"><p>還沒有上課紀錄。</p><button type="button" onClick={() => setView('training')}>回到課表安排課程</button></div>}</section> : <>
     <div className="app-layout" id="top">
       <aside className="student-sidebar"><div className="sidebar-label"><span>學員名單</span><button type="button" onClick={() => setModal('new')} aria-label="新增學員">＋</button></div><div className="student-list">{students.map((item) => <button key={item.id} type="button" className={`student-item ${item.id === student.id ? 'selected' : ''}`} onClick={() => setSelectedId(item.id)}><span className="student-initial">{item.name.slice(0, 1)}</span><strong>{item.name}</strong></button>)}</div></aside>
       <section className="program-area"><div className="program-heading"><div><p className="overline">{student.name}・{student.goal}</p></div><div className="program-actions"><button type="button" className="quiet-button" onClick={() => setModal('edit')}>編輯學員</button><button type="button" className="delete-button" onClick={deleteStudent}>刪除</button></div></div>
-        <div className="session-note"><span>本次課程</span><input aria-label="本次課程日期" type="date" defaultValue={new Date().toISOString().slice(0, 10)} /><textarea placeholder="課前觀察／今天的訓練目標…" /></div>
+        <div className="session-note"><span>本次課程</span><input aria-label="上課日期" type="date" value={sessionDraft.date} onChange={(e) => setSessionDraft((draft) => ({ ...draft, date: e.target.value }))} /><input aria-label="上課時間" type="time" value={sessionDraft.time} onChange={(e) => setSessionDraft((draft) => ({ ...draft, time: e.target.value }))} /></div>
         {Object.entries(groupedPlan).map(([section, exercises]) => <section className="program-section" key={section}><div className="section-title"><h2>{section}</h2><button type="button" onClick={() => addExercise(section)}>＋ 新增動作</button></div><div className="exercise-head"><span>動作</span><span>重量</span><span>次數</span><span>組數</span></div>{exercises.map((exercise, sectionIndex) => <div className="exercise-row" key={exercise.id || exercise.index}><div className="exercise-title"><input className="exercise-name" value={exercise.name} onChange={(e) => updateExercise(exercise.index, 'name', e.target.value)} aria-label="動作名稱" /><small>{exercise.note}</small></div><label className="metric"><input inputMode="decimal" value={exercise.weight} onChange={(e) => updateExercise(exercise.index, 'weight', e.target.value)} placeholder="—" /><span>kg</span></label><label className="metric"><input value={exercise.reps} onChange={(e) => updateExercise(exercise.index, 'reps', e.target.value)} /><span>{exercise.unit}</span></label><label className="metric"><input inputMode="numeric" value={exercise.sets} onChange={(e) => updateExercise(exercise.index, 'sets', e.target.value)} /><span>組</span></label><div className="row-controls"><button type="button" onClick={() => moveExercise(exercise.index, -1)} disabled={sectionIndex === 0} aria-label="上移動作">↑</button><button type="button" onClick={() => moveExercise(exercise.index, 1)} disabled={sectionIndex === exercises.length - 1} aria-label="下移動作">↓</button><button className="delete-exercise" type="button" onClick={() => deleteExercise(exercise.index)} aria-label={`刪除 ${exercise.name}`}>×</button></div></div>)}</section>)}
         <div className="finish-card"><div><p className="overline">手動儲存</p><h2>完成本次調整後儲存</h2><p>{saveState || '重量、次數與組數會保留在此手機，並同步至 Google Sheets。'}</p></div><button type="button" onClick={saveToSheets}>儲存課表</button></div>
       </section>
-    </div>
+    </div></>}
     {modal && <StudentModal mode={modal} student={modal === 'edit' ? student : null} onClose={() => setModal('')} onSave={saveStudent} />}
   </main>;
 }
