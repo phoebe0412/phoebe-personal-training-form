@@ -3,7 +3,7 @@ import { GOOGLE_APPS_SCRIPT_URL } from './config';
 
 const initialForm = {
   name: '', phone: '', line: '', birthday: '', gender: '', work: '', workOther: '', sleep: '',
-  condition: '', conditionNote: '', symptoms: '', injuries: [], injuryNote: '', pregnancy: '', exercise: [],
+  condition: '', conditionNote: '', symptoms: '', injuries: [], injuryNote: '', pregnancy: '', exerciseFrequency: '', activities: [],
   coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: '', timeOther: '', message: '',
 };
 
@@ -15,7 +15,8 @@ const choices = {
   symptoms: ['否', '是'],
   injuries: ['無任何舊傷或疼痛', '頸部／肩部', '下背／腰部', '膝蓋', '腳踝', '其他關節或手術史'],
   pregnancy: ['否', '是（懷孕中）', '是（產後半年內）'],
-  exercise: ['完全無運動習慣（新手）', '偶爾運動（每月 1～2 次）', '規律自主運動（每週 1～2 次，如慢跑、單車、居家）', '規律重量訓練（每週 3 次以上，自由重量／機械式）'],
+  exerciseFrequency: ['幾乎沒有（0 天）', '1～2 天', '3～4 天', '5 天以上'],
+  activities: ['肌力／重量訓練（器械或自由重量）', '跑步／單車／游泳等耐力有氧', '團體有氧課（如飛輪、Les Mills、HIIT）', '瑜伽／皮拉提斯／伸展', '球類運動／登山攀岩', '尚無固定項目'],
   coaching: ['否，這是第一次', '是，半年以內曾上過', '是，已是一年以前'],
   barriers: ['缺乏動力與自律，難以持續', '不清楚正確動作，容易受傷或代償疼痛', '自行排課／飲食效果不明顯，進入瓶頸', '時間難以安排', '其他'],
   focus: ['身體組成與動作活動度檢測評估', '完整的個人化課表訓練體驗', '長期訓練規劃諮詢'],
@@ -60,7 +61,7 @@ export function App() {
     event.preventDefault();
     setSubmitError('');
     const nextErrors = {};
-    const requiredFields = ['name', 'phone', 'line', 'birthday', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exercise', 'coaching', 'barriers', 'focus', 'frequency', 'time'];
+    const requiredFields = ['name', 'phone', 'line', 'birthday', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exerciseFrequency', 'activities', 'coaching', 'barriers', 'focus', 'frequency', 'time'];
     if (form.gender === '女') requiredFields.push('pregnancy');
     if (form.work === '其他') requiredFields.push('workOther');
     if (form.condition.startsWith('是')) requiredFields.push('conditionNote');
@@ -132,7 +133,8 @@ export function App() {
       <ChoiceGroup name="injuries" label="過去或目前是否有骨骼肌肉舊傷、關節問題或脊椎不適？" options={choices.injuries} value={form.injuries} onChange={update} multiple otherKey="injuryNote" form={form} error={errors.injuries} />
       <section className={`form-section ${errors.injuryNote ? 'has-error' : ''}`} data-field="injuryNote"><label>受傷時間、目前感受或限制<span className="required">＊</span><textarea value={form.injuryNote} onChange={(e) => update('injuryNote', e.target.value)} placeholder="若無，請填「無」" /></label>{errors.injuryNote && <p className="field-error">{errors.injuryNote}</p>}</section>
       {form.gender === '女' && <ChoiceGroup name="pregnancy" label="目前是否懷孕或產後半年內？（女性填寫）" options={choices.pregnancy} value={form.pregnancy} onChange={update} error={errors.pregnancy} />}
-      <ChoiceGroup name="exercise" label="目前規律運動經驗" options={choices.exercise} value={form.exercise} onChange={update} multiple error={errors.exercise} />
+      <ChoiceGroup name="exerciseFrequency" label="目前每週平均運動頻率" options={choices.exerciseFrequency} value={form.exerciseFrequency} onChange={update} error={errors.exerciseFrequency} />
+      <ChoiceGroup name="activities" label="平常最常進行的運動項目？（可複選）" options={choices.activities} value={form.activities} onChange={update} multiple error={errors.activities} />
       <ChoiceGroup name="coaching" label="過去是否曾購買或上過一對一私人教練課？" options={choices.coaching} value={form.coaching} onChange={update} error={errors.coaching} />
       <ChoiceGroup name="barriers" label="過去在運動或維持體態上，遇到的最大困難是什麼？" options={choices.barriers} value={form.barriers} onChange={update} multiple otherKey="barrierOther" form={form} error={errors.barriers || errors.barrierOther} />
 
