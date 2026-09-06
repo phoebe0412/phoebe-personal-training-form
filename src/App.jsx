@@ -98,7 +98,7 @@ export function App() {
       <h1>一對一教學體驗課<br /><em>體驗價｜90 分鐘・NT$1,500</em></h1>
       <div className="coach-intro">
         <p>你好，我是 Phoebe。</p>
-        <p>現代人長時間久坐，常見髖部緊繃、背部無力，直接重訓往往容易代償受傷。我結合 <strong>ATP 活動度訓練</strong> 與 <strong>KAT 進階阻力力學</strong>，從呼吸評估、關節中心化到本體感覺引導，先幫你找回身體活動空間，再透過槓鈴、啞鈴與壺鈴扎實建構肌力。</p>
+        <p>過去我曾受肩部沾黏與膝蓋積水困擾，直到透過 <strong>ATG 系統</strong> 重建關節能力，徹底擺脫疼痛限制。現代人因久坐常見髖部緊繃、背部無力，直接重訓極易代償受傷。我結合 <strong>ATG 活動度訓練</strong> 與 <strong>KAT 進階阻力力學</strong>，從呼吸評估、關節中心化到本體感覺引導，先幫你找回無痛的關節空間，再透過槓鈴、啞鈴與壺鈴扎實建構力量。</p>
       </div>
       <ul className="bio-list">
         <li><strong>專業認證</strong><span>NSCA-CPT 私人教練認證、CPR+AED 急救員</span></li>
