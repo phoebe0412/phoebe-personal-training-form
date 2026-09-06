@@ -111,7 +111,7 @@ export function App() {
         <li><strong>進修研習</strong><span>KAT training 進階阻力訓練</span></li>
       </ul>
       <p className="hero-copy">訓練不該是生活的負擔，而是讓生活更輕鬆的工具。歡迎預約體驗課，一起找出最適合你的動作模式！</p>
-      <p className="price-tag">體驗價　90 分鐘・NT$1,200</p>
+      <p className="price-tag">體驗價　90 分鐘・NT$1,500</p>
     </header>
 
     <form onSubmit={submit} noValidate>
