@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { GOOGLE_APPS_SCRIPT_URL } from './config';
 
 const initialForm = {
   name: '', phone: '', line: '', birthday: '', gender: '', work: '', workOther: '', sleep: '',
@@ -50,8 +51,27 @@ function ChoiceGroup({ name, label, options, value, onChange, multiple = false, 
 export function App() {
   const [form, setForm] = useState(initialForm);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const update = (key, value) => setForm((previous) => ({ ...previous, [key]: value }));
-  const submit = (event) => { event.preventDefault(); setSubmitted(true); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const submit = async (event) => {
+    event.preventDefault();
+    setSubmitError('');
+    if (!GOOGLE_APPS_SCRIPT_URL) {
+      setSubmitError('表單收件功能尚未完成設定，請稍後再試。');
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      await fetch(GOOGLE_APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(form) });
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      setSubmitError('送出失敗，請確認網路後再試。');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (submitted) return <main className="page"><div className="success-card"><p className="eyebrow">預約資料已送出</p><h1>謝謝你，{form.name || '學員'}！</h1><p>我會透過你提供的 LINE ID 與你確認體驗課時間。期待一起找回舒服、穩定的動作節奏。</p><button type="button" onClick={() => setSubmitted(false)}>返回表單</button></div></main>;
 
@@ -99,7 +119,7 @@ export function App() {
       <ChoiceGroup name="focus" label="體驗課最希望教練重點協助您的是？" options={choices.focus} value={form.focus} onChange={update} />
       <ChoiceGroup name="frequency" label="若體驗後感覺符合需求，未來每週預計可配合的上課頻率？" options={choices.frequency} value={form.frequency} onChange={update} />
       <ChoiceGroup name="time" label="方便安排上課的常見時段" options={choices.time} value={form.time} onChange={update} otherKey="timeOther" form={form} />
-      <div className="submit-area"><p>送出後，Phoebe 將以 LINE 聯繫您確認課程。</p><button type="submit">送出體驗課申請</button></div>
+      <div className="submit-area"><p>送出後，Phoebe 將以 LINE 聯繫您確認課程。</p>{submitError && <p className="submit-error" role="alert">{submitError}</p>}<button type="submit" disabled={isSubmitting}>{isSubmitting ? '資料送出中…' : '送出體驗課申請'}</button></div>
     </form>
   </main>;
 }
