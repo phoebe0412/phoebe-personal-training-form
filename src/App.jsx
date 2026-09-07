@@ -96,8 +96,12 @@ export function App() {
       <div className="hero-mark" aria-hidden="true"></div>
       <figure className="coach-photo">
         <img src="./images/phoebe-coach.jpg" alt="私人教練 Phoebe 在健身房" />
+        <figcaption className="photo-brand" aria-label="Phoebe Personal Training">
+          <span className="photo-brand-name">PHOEBE</span>
+          <span className="photo-brand-divider" aria-hidden="true"></span>
+          <span className="photo-brand-service">PERSONAL<br />TRAINING</span>
+        </figcaption>
       </figure>
-      <p className="eyebrow">PHOEBE PERSONAL TRAINING</p>
       <h1>一對一教學體驗課<br /><em>體驗價｜90 分鐘・NT$1,500</em></h1>
       <div className="coach-intro">
         <p>你好，我是 Phoebe。</p>

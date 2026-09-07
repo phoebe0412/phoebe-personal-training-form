@@ -1,28 +1,32 @@
 # Design QA
 
-- Source visual truth: the seven supplied Google Forms screenshots on the Desktop.
-- Implementation target: `/Users/phoebechou/Documents/教練課學員資料/體驗課預約表單`.
-- Intended viewport: responsive web, checked by source code at desktop and mobile breakpoints.
-- State: empty form, with conditional fields revealed by the corresponding selections.
+- Source visual truth: `/Users/phoebechou/Downloads/ELXR POWER Electrolytes - Canadian Electrolytes _ Zero Sugar Hydration.jpeg`.
+- Implementation target: homepage hero in `src/App.jsx` and `src/styles.css`.
+- Intended viewport: desktop and mobile responsive web.
+- State: empty booking form; hero photo visible.
 
 ## Findings
 
-- Browser-rendered screenshot capture is blocked in this environment: the in-app browser runtime fails during initialization (`Cannot redefine property: process`). Consequently, a same-viewport visual comparison cannot be completed.
-- Functional build checks passed: production bundle built successfully; the static worker tests passed 4/4.
+- Browser-rendered screenshot capture is blocked: the in-app browser runtime cannot initialize (`Cannot redefine property: process`). Therefore, a same-viewport visual comparison and interaction check could not be performed.
+- Production compilation passes successfully. The implementation adds a high-contrast white `PHOEBE | PERSONAL TRAINING` lockup inside the supplied coach photo, inspired by the reference's in-image wordmark and divider without reproducing its trademarked identity or copy.
 
 ## Fidelity surfaces
 
-- Typography: Noto Sans TC hierarchy and a compact mono eyebrow are defined.
-- Spacing and layout rhythm: card spacing, a two-column desktop form grid, and a single-column mobile breakpoint are implemented.
-- Colors and tokens: restrained off-white canvas, white cards, charcoal copy, and indigo accent tokens are implemented.
-- Image quality and asset fidelity: no image assets are used or required by the selected minimal form direction.
-- Copy and content: all 18 screenshot questions are represented, with wording streamlined only where it improves form clarity.
+- Fonts and typography: compact mono lettering creates an athletic editorial lockup; sizing is responsive.
+- Spacing and layout rhythm: the brand sits 18–20px from the photo edges and stays in the lower visual third; mobile receives a larger, full-width image treatment.
+- Colors and visual tokens: white type on a restrained dark overlay maintains contrast while preserving the photo.
+- Image quality and asset fidelity: the supplied, person-removed coach portrait is used at a fitted portrait crop; no substitute imagery is introduced.
+- Copy and content: brand copy is exactly `PHOEBE PERSONAL TRAINING`, split into a visual wordmark plus service label.
 
-## Primary interactions covered in code
+## Comparison history
 
-- Required identity fields and browser-native date validation.
-- Exclusive radio selections and multiple checkbox selections.
-- Contextual “other” fields and a conditional chronic-condition detail field.
-- Submit confirmation state with a return-to-form action.
+- No browser-rendered comparison iteration was possible because the browser connection failed before screenshot capture.
+
+## Implementation checklist
+
+- [x] Place the brand directly on the coach photo.
+- [x] Add the reference-inspired divider and compact supporting label.
+- [x] Preserve responsive mobile and desktop behaviour.
+- [x] Verify the production build.
 
 final result: blocked
