@@ -94,6 +94,9 @@ export function App() {
   return <main className="page">
     <header className="hero">
       <div className="hero-mark" aria-hidden="true"></div>
+      <figure className="coach-photo">
+        <img src="./images/phoebe-coach.jpg" alt="私人教練 Phoebe 在健身房" />
+      </figure>
       <p className="eyebrow">PHOEBE PERSONAL TRAINING</p>
       <h1>一對一教學體驗課<br /><em>體驗價｜90 分鐘・NT$1,500</em></h1>
       <div className="coach-intro">
@@ -141,4 +144,3 @@ export function App() {
     </form>
   </main>;
 }
-
