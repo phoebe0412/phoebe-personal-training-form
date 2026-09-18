@@ -94,6 +94,7 @@ export function App() {
   return <main className="page">
     <header className="hero">
       <div className="hero-mark" aria-hidden="true"></div>
+      <p className="eyebrow">PHOEBE PERSONAL TRAINING</p>
       <h1>一對一教學體驗課<br /><em>體驗價｜90 分鐘・NT$1,500</em></h1>
       <div className="coach-intro">
         <p>你好，我是 Phoebe。</p>
