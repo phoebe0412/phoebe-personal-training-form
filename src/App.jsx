@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GOOGLE_APPS_SCRIPT_URL } from './config';
 
 const initialForm = {
-  name: '', phone: '', line: '', birthday: '', gender: '', work: '', workOther: '', sleep: '',
+  name: '', phone: '', line: '', birthday: '', height: '', weight: '', gender: '', work: '', workOther: '', sleep: '',
   condition: '', conditionNote: '', symptoms: '', injuries: [], injuryNote: '', pregnancy: '', exerciseFrequency: '', activities: [],
   coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: '', timeOther: '', message: '',
 };
@@ -60,7 +60,7 @@ export function App() {
     event.preventDefault();
     setSubmitError('');
     const nextErrors = {};
-    const requiredFields = ['name', 'phone', 'line', 'birthday', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exerciseFrequency', 'activities', 'coaching', 'barriers', 'focus', 'frequency', 'time'];
+    const requiredFields = ['name', 'phone', 'line', 'birthday', 'height', 'weight', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exerciseFrequency', 'activities', 'coaching', 'barriers', 'focus', 'frequency', 'time'];
     if (form.gender === '女') requiredFields.push('pregnancy');
     if (form.work === '其他') requiredFields.push('workOther');
     if (form.condition.startsWith('是')) requiredFields.push('conditionNote');
@@ -115,6 +115,8 @@ export function App() {
         <section className={`form-section ${errors.phone ? 'has-error' : ''}`} data-field="phone"><label>聯絡電話<span className="required">＊</span><input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.phone && <p className="field-error">{errors.phone}</p>}</section>
         <section className={`form-section ${errors.line ? 'has-error' : ''}`} data-field="line"><label>LINE ID<span className="required">＊</span><small>方便後續傳送預約確認與提醒</small><input value={form.line} onChange={(e) => update('line', e.target.value)} placeholder="請輸入 LINE ID" /></label>{errors.line && <p className="field-error">{errors.line}</p>}</section>
         <section className={`form-section ${errors.birthday ? 'has-error' : ''}`} data-field="birthday"><label>生日<span className="required">＊</span><input type="date" value={form.birthday} onChange={(e) => update('birthday', e.target.value)} /></label>{errors.birthday && <p className="field-error">{errors.birthday}</p>}</section>
+        <section className={`form-section ${errors.height ? 'has-error' : ''}`} data-field="height"><label>身高（cm）<span className="required">＊</span><input type="number" inputMode="decimal" min="50" max="250" step="0.1" value={form.height} onChange={(e) => update('height', e.target.value)} placeholder="例如：165" /></label>{errors.height && <p className="field-error">{errors.height}</p>}</section>
+        <section className={`form-section ${errors.weight ? 'has-error' : ''}`} data-field="weight"><label>體重（kg）<span className="required">＊</span><input type="number" inputMode="decimal" min="20" max="350" step="0.1" value={form.weight} onChange={(e) => update('weight', e.target.value)} placeholder="例如：55" /></label>{errors.weight && <p className="field-error">{errors.weight}</p>}</section>
       </div>
       <ChoiceGroup name="gender" label="性別" options={choices.gender} value={form.gender} onChange={update} error={errors.gender} />
       <ChoiceGroup name="work" label="日常工作型態" options={choices.work} value={form.work} onChange={update} otherKey="workOther" form={form} error={errors.work || errors.workOther} />
