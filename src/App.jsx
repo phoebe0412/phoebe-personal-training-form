@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GOOGLE_APPS_SCRIPT_URL } from './config';
 
 const initialForm = {
-  name: '', phone: '', line: '', birthday: '', height: '', weight: '', gender: '', work: '', workOther: '', sleep: '',
+  name: '', phone: '', emergencyContact: '', emergencyRelation: '', emergencyPhone: '', line: '', birthday: '', height: '', weight: '', gender: '', work: '', workOther: '', sleep: '',
   condition: '', conditionNote: '', symptoms: '', injuries: [], injuryNote: '', pregnancy: '', exerciseFrequency: '', activities: [],
   coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: '', timeOther: '', message: '',
 };
@@ -113,6 +113,9 @@ export function App() {
       <div className="form-grid">
         <section className={`form-section ${errors.name ? 'has-error' : ''}`} data-field="name"><label>姓名<span className="required">＊</span><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="請輸入姓名" /></label>{errors.name && <p className="field-error">{errors.name}</p>}</section>
         <section className={`form-section ${errors.phone ? 'has-error' : ''}`} data-field="phone"><label>聯絡電話<span className="required">＊</span><input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.phone && <p className="field-error">{errors.phone}</p>}</section>
+        <section className="form-section" data-field="emergencyContact"><label>緊急聯絡人<small>選填</small><input value={form.emergencyContact} onChange={(e) => update('emergencyContact', e.target.value)} placeholder="請輸入姓名" /></label></section>
+        <section className="form-section" data-field="emergencyRelation"><label>聯絡人關係<small>選填</small><input value={form.emergencyRelation} onChange={(e) => update('emergencyRelation', e.target.value)} placeholder="例如：家人、配偶、朋友" /></label></section>
+        <section className="form-section" data-field="emergencyPhone"><label>聯絡人電話<small>選填</small><input type="tel" value={form.emergencyPhone} onChange={(e) => update('emergencyPhone', e.target.value)} placeholder="例如：0912 345 678" /></label></section>
         <section className={`form-section ${errors.line ? 'has-error' : ''}`} data-field="line"><label>LINE ID<span className="required">＊</span><small>方便後續傳送預約確認與提醒</small><input value={form.line} onChange={(e) => update('line', e.target.value)} placeholder="請輸入 LINE ID" /></label>{errors.line && <p className="field-error">{errors.line}</p>}</section>
         <section className={`form-section ${errors.birthday ? 'has-error' : ''}`} data-field="birthday"><label>生日<span className="required">＊</span><input type="date" value={form.birthday} onChange={(e) => update('birthday', e.target.value)} /></label>{errors.birthday && <p className="field-error">{errors.birthday}</p>}</section>
         <section className={`form-section ${errors.height ? 'has-error' : ''}`} data-field="height"><label>身高（cm）<span className="required">＊</span><input type="number" inputMode="decimal" min="50" max="250" step="0.1" value={form.height} onChange={(e) => update('height', e.target.value)} placeholder="例如：165" /></label>{errors.height && <p className="field-error">{errors.height}</p>}</section>
