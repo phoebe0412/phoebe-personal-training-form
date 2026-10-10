@@ -109,8 +109,8 @@ export function App() {
       <p className="section-kicker">01 · 基礎認識</p>
       <h2>什麼是 ATG？</h2>
       <div className="atg-list">
-        <div><h3>品牌起源</h3><p>由訓練專家 <strong>Ben Patrick（Kneesovertoesguy）</strong> 創立的關節防護、肌力重建與運動表現訓練系統。</p></div>
-        <div><h3>打破傳統迷思</h3><p>顛覆「深蹲膝蓋絕不能超過腳趾」的舊觀念，主張關節在受控的全活動範圍（Full ROM）承受張力，才是強化肌腱與韌帶的關鍵。</p></div>
+        <div><span className="atg-icon" aria-hidden="true">◎</span><h3>品牌起源</h3><p>由訓練專家 <strong>Ben Patrick（Kneesovertoesguy）</strong> 創立的關節防護、肌力重建與運動表現訓練系統。</p></div>
+        <div><span className="atg-icon" aria-hidden="true">↗</span><h3>打破傳統迷思</h3><p>顛覆「深蹲膝蓋絕不能超過腳趾」的舊觀念，主張關節在受控的全活動範圍（Full ROM）承受張力，才是強化肌腱與韌帶的關鍵。</p></div>
       </div>
     </section>
 
@@ -118,29 +118,18 @@ export function App() {
       <p className="section-kicker">02 · 核心哲學</p>
       <h2>兩大不可妥協的核心哲學</h2>
       <div className="atg-principles">
-        <article><span>01</span><h3>全無痛原則（Pain-Free Standard）</h3><p>任何動作皆不硬撐，嚴格依個人活動度進行「階梯式退階（Regression）」。</p></article>
-        <article><span>02</span><h3>由遠端到核心（末梢先行原則）</h3><p>優先強化腳踝、脛前肌與足底等第一道吸震防線，再逐步串聯膝蓋、髖關節與後側鏈。</p></article>
+        <article><span>01</span><i className="principle-icon" aria-hidden="true">⌁</i><h3>全無痛原則（Pain-Free Standard）</h3><p>任何動作皆不硬撐，嚴格依個人活動度進行「階梯式退階（Regression）」。</p></article>
+        <article><span>02</span><i className="principle-icon" aria-hidden="true">◌</i><h3>由遠端到核心（末梢先行原則）</h3><p>優先強化腳踝、脛前肌與足底等第一道吸震防線，再逐步串聯膝蓋、髖關節與後側鏈。</p></article>
       </div>
     </section>
 
     <section className="atg-section">
-      <p className="section-kicker">03 · 訓練模組</p>
-      <h2>經典四大訓練模組</h2>
-      <div className="atg-modules">
-        <article><span>01</span><h3>末梢減壓與幫浦充血</h3><p><strong>倒退走／倒退雪橇（Backward Sled/Walk）</strong>：零衝擊為膝關節注入滑液與血液。</p><p><strong>脛前肌上提（Tibialis Raise）</strong>：建立急停煞車與防夾脛緩衝力。</p></article>
-        <article><span>02</span><h3>單側控制與膝踝剛性</h3><p><strong>波力奎步（Poliquin Step Up）</strong>：斜板受控離心，精準強化髕骨與股內側肌（VMO）。</p></article>
-        <article><span>03</span><h3>極限活動度與長步幅推進</h3><p><strong>ATG 分腿蹲（ATG Split Squat）</strong>：前腿深蹲包覆、後腿延展髖屈肌，打開極限關節活動度。</p></article>
-        <article><span>04</span><h3>後側鏈極限煞車與下背防護</h3><p><strong>北歐彎舉（Nordic Curl）</strong>與<strong>背伸展（Back Extension）</strong>：打造防拉傷的膝屈煞車力與下背終末推進力。</p></article>
-      </div>
-    </section>
-
-    <section className="atg-section">
-      <p className="section-kicker">04 · 適合對象</p>
+      <p className="section-kicker">03 · 適合對象</p>
       <h2>適合對象與具體成效</h2>
-      <div className="atg-list">
-        <div><h3>下肢關節卡痛、久坐族</h3><p>膝蓋緊繃、上下樓梯不適、足踝僵硬，找回日常無痛活動能力。</p></div>
-        <div><h3>球類運動員與跑者</h3><p>提升垂直彈跳、推進步幅、急停制動力並大幅預防運動傷害。</p></div>
-        <div><h3>健身與體態追求者</h3><p>解鎖深蹲深度，建立兼具「高力量」與「高柔軟度」的防彈身體。</p></div>
+      <div className="atg-benefits">
+        <article><i aria-hidden="true">◒</i><h3>下肢關節卡痛、久坐族</h3><p>膝蓋緊繃、上下樓梯不適、足踝僵硬，找回日常無痛活動能力。</p></article>
+        <article><i aria-hidden="true">↟</i><h3>球類運動員與跑者</h3><p>提升垂直彈跳、推進步幅、急停制動力並大幅預防運動傷害。</p></article>
+        <article><i aria-hidden="true">✦</i><h3>健身與體態追求者</h3><p>解鎖深蹲深度，建立兼具「高力量」與「高柔軟度」的防彈身體。</p></article>
       </div>
     </section>
     <div className="atg-cta"><p>想了解適合自己的訓練起點？</p><button className="hero-cta" type="button" onClick={() => { setAtgView(false); showBooking(); }}>立即預約體驗課</button></div>
