@@ -118,8 +118,8 @@ export function App() {
       <p className="section-kicker">02 · 核心哲學</p>
       <h2>兩大不可妥協的核心哲學</h2>
       <div className="atg-principles">
-        <article><span>01</span><i className="principle-icon" aria-hidden="true">⌁</i><h3>全無痛原則（Pain-Free Standard）</h3><p>任何動作皆不硬撐，嚴格依個人活動度進行「階梯式退階（Regression）」。</p></article>
-        <article><span>02</span><i className="principle-icon" aria-hidden="true">◌</i><h3>由遠端到核心（末梢先行原則）</h3><p>優先強化腳踝、脛前肌與足底等第一道吸震防線，再逐步串聯膝蓋、髖關節與後側鏈。</p></article>
+        <article><h3>全無痛原則（Pain-Free Standard）</h3><p>任何動作皆不硬撐，嚴格依個人活動度進行「階梯式退階（Regression）」。</p></article>
+        <article><h3>由遠端到核心（末梢先行原則）</h3><p>優先強化腳踝、脛前肌與足底等第一道吸震防線，再逐步串聯膝蓋、髖關節與後側鏈。</p></article>
       </div>
     </section>
 
