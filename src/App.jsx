@@ -4,7 +4,7 @@ import { GOOGLE_APPS_SCRIPT_URL } from './config';
 const initialForm = {
   name: '', phone: '', emergencyContact: '', emergencyRelation: '', emergencyPhone: '', line: '', birthday: '', height: '', weight: '', gender: '', work: '', workOther: '', sleep: '',
   condition: '', conditionNote: '', symptoms: '', injuries: [], injuryNote: '', pregnancy: '', exerciseFrequency: '', activities: [],
-  coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: '', timeOther: '', message: '', termsAccepted: false,
+  coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: [], timeOther: '', message: '', termsAccepted: false,
 };
 
 const choices = {
@@ -66,7 +66,7 @@ export function App() {
     if (form.condition.startsWith('是')) requiredFields.push('conditionNote');
     if (form.injuries.some((item) => item.includes('其他關節'))) requiredFields.push('injuryNote');
     if (form.barriers.includes('其他')) requiredFields.push('barrierOther');
-    if (form.time === '其他') requiredFields.push('timeOther');
+    if (form.time.includes('其他')) requiredFields.push('timeOther');
     requiredFields.forEach((key) => {
       const value = form[key];
       if (!value || (Array.isArray(value) && value.length === 0) || (typeof value === 'string' && value.trim() === '')) nextErrors[key] = '此欄位為必填，請完成後再送出。';
@@ -137,7 +137,7 @@ export function App() {
       <div className="section-heading"><p className="section-kicker">體驗課期待</p><h2>一起安排最適合你的開始</h2></div>
       <ChoiceGroup name="focus" label="體驗課最希望教練重點協助您的是？" options={choices.focus} value={form.focus} onChange={update} error={errors.focus} />
       <ChoiceGroup name="frequency" label="若體驗後感覺符合需求，未來每週預計可配合的上課頻率？" options={choices.frequency} value={form.frequency} onChange={update} error={errors.frequency} />
-      <ChoiceGroup name="time" label="方便安排上課的常見時段" options={choices.time} value={form.time} onChange={update} otherKey="timeOther" form={form} error={errors.time || errors.timeOther} />
+      <ChoiceGroup name="time" label="方便安排上課的常見時段（可複選）" options={choices.time} value={form.time} onChange={update} multiple otherKey="timeOther" form={form} error={errors.time || errors.timeOther} />
       <div className="emergency-grid">
         <section className={`form-section ${errors.emergencyContact ? 'has-error' : ''}`} data-field="emergencyContact"><label>緊急聯絡人<span className="required">＊</span><input value={form.emergencyContact} onChange={(e) => update('emergencyContact', e.target.value)} placeholder="請輸入姓名" /></label>{errors.emergencyContact && <p className="field-error">{errors.emergencyContact}</p>}</section>
         <section className={`form-section ${errors.emergencyRelation ? 'has-error' : ''}`} data-field="emergencyRelation"><label>聯絡人關係<span className="required">＊</span><input value={form.emergencyRelation} onChange={(e) => update('emergencyRelation', e.target.value)} placeholder="例如：家人、配偶、朋友" /></label>{errors.emergencyRelation && <p className="field-error">{errors.emergencyRelation}</p>}</section>
