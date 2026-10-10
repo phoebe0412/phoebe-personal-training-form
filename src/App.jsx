@@ -4,7 +4,7 @@ import { GOOGLE_APPS_SCRIPT_URL } from './config';
 const initialForm = {
   name: '', phone: '', emergencyContact: '', emergencyRelation: '', emergencyPhone: '', line: '', birthday: '', height: '', weight: '', gender: '', work: '', workOther: '', sleep: '',
   condition: '', conditionNote: '', symptoms: '', injuries: [], injuryNote: '', pregnancy: '', exerciseFrequency: '', activities: [],
-  coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: '', timeOther: '', message: '',
+  coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: '', timeOther: '', message: '', termsAccepted: false,
 };
 
 const choices = {
@@ -60,7 +60,7 @@ export function App() {
     event.preventDefault();
     setSubmitError('');
     const nextErrors = {};
-    const requiredFields = ['name', 'phone', 'line', 'birthday', 'height', 'weight', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exerciseFrequency', 'activities', 'coaching', 'barriers', 'focus', 'frequency', 'time', 'emergencyContact', 'emergencyRelation', 'emergencyPhone'];
+    const requiredFields = ['name', 'phone', 'line', 'birthday', 'height', 'weight', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exerciseFrequency', 'activities', 'coaching', 'barriers', 'focus', 'frequency', 'time', 'emergencyContact', 'emergencyRelation', 'emergencyPhone', 'termsAccepted'];
     if (form.gender === '女') requiredFields.push('pregnancy');
     if (form.work === '其他') requiredFields.push('workOther');
     if (form.condition.startsWith('是')) requiredFields.push('conditionNote');
@@ -144,6 +144,16 @@ export function App() {
         <section className={`form-section ${errors.emergencyPhone ? 'has-error' : ''}`} data-field="emergencyPhone"><label>聯絡人電話<span className="required">＊</span><input type="tel" value={form.emergencyPhone} onChange={(e) => update('emergencyPhone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.emergencyPhone && <p className="field-error">{errors.emergencyPhone}</p>}</section>
       </div>
       <section className="form-section" data-field="message"><label>想對教練說的話<small>選填</small><textarea value={form.message} onChange={(e) => update('message', e.target.value)} placeholder="有任何期待、疑問或想先讓教練知道的事，都可以寫在這裡。" /></label></section>
+      <section className={`terms-section ${errors.termsAccepted ? 'has-error' : ''}`} data-field="termsAccepted">
+        <h2>課程條款與免責聲明同意書</h2>
+        <div className="terms-copy">
+          <p>本人確認已如實告知健康狀況、既往傷病、用藥與其他可能影響運動安全之資訊；如有不適、懷孕、慢性疾病或醫師建議限制運動之情形，將先諮詢醫師或相關專業人員。</p>
+          <p>本人了解本課程為運動指導與體能訓練，非醫療診斷、治療或復健。運動仍可能有肌肉痠痛、跌倒、拉傷或其他不可預期風險；本人將依自身狀況參與，遵循教練指示，並於不適時立即告知與停止活動。</p>
+          <p>如發生緊急狀況，本人同意教練視情況聯絡上方緊急聯絡人及／或尋求緊急醫療協助。本人理解本同意不影響依法得主張之權利。</p>
+        </div>
+        <label className="terms-check"><input type="checkbox" checked={form.termsAccepted} onChange={(event) => update('termsAccepted', event.target.checked)} /><span>我已閱讀、理解並同意上述課程條款與免責聲明<span className="required">＊</span></span></label>
+        {errors.termsAccepted && <p className="field-error" role="alert">{errors.termsAccepted}</p>}
+      </section>
       <div className="submit-area"><p>送出後，Phoebe 將以 LINE 聯繫您確認課程。</p>{submitError && <p className="submit-error" role="alert">{submitError}</p>}<button type="submit">送出體驗課申請</button></div>
     </form>
   </main>;
