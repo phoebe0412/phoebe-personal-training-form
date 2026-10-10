@@ -56,6 +56,7 @@ export function App() {
   const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState({});
   const [bookingView, setBookingView] = useState(false);
+  const [atgView, setAtgView] = useState(false);
   const update = (key, value) => setForm((previous) => ({ ...previous, [key]: value }));
   const showBooking = () => {
     setBookingView(true);
@@ -96,6 +97,55 @@ export function App() {
 
   if (submitted) return <main className="page"><div className="success-card"><p className="eyebrow">預約資料已送出</p><h1>謝謝你，{form.name || '學員'}！</h1><p>我會透過你提供的 LINE ID 與你確認體驗課時間。期待一起找回舒服、穩定的動作節奏。</p><button type="button" onClick={() => { setSubmitted(false); setBookingView(true); }}>返回表單</button></div></main>;
 
+  if (atgView) return <main className="page atg-page">
+    <header className="booking-header">
+      <button className="back-button" type="button" onClick={() => { setAtgView(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>← 返回介紹</button>
+      <p className="eyebrow">ATG · ATHLETIC TRUTH GROUP</p>
+      <h1>ATG 系統介紹</h1>
+      <p className="atg-lead">以受控的全活動範圍訓練，循序找回關節活動度、力量與運動表現。</p>
+    </header>
+
+    <section className="atg-section">
+      <p className="section-kicker">01 · 基礎認識</p>
+      <h2>什麼是 ATG？</h2>
+      <div className="atg-list">
+        <div><h3>品牌起源</h3><p>由訓練專家 <strong>Ben Patrick（Kneesovertoesguy）</strong> 創立的關節防護、肌力重建與運動表現訓練系統。</p></div>
+        <div><h3>打破傳統迷思</h3><p>顛覆「深蹲膝蓋絕不能超過腳趾」的舊觀念，主張關節在受控的全活動範圍（Full ROM）承受張力，才是強化肌腱與韌帶的關鍵。</p></div>
+      </div>
+    </section>
+
+    <section className="atg-section">
+      <p className="section-kicker">02 · 核心哲學</p>
+      <h2>兩大不可妥協的核心哲學</h2>
+      <div className="atg-principles">
+        <article><span>01</span><h3>全無痛原則（Pain-Free Standard）</h3><p>任何動作皆不硬撐，嚴格依個人活動度進行「階梯式退階（Regression）」。</p></article>
+        <article><span>02</span><h3>由遠端到核心（末梢先行原則）</h3><p>優先強化腳踝、脛前肌與足底等第一道吸震防線，再逐步串聯膝蓋、髖關節與後側鏈。</p></article>
+      </div>
+    </section>
+
+    <section className="atg-section">
+      <p className="section-kicker">03 · 訓練模組</p>
+      <h2>經典四大訓練模組</h2>
+      <div className="atg-modules">
+        <article><span>01</span><h3>末梢減壓與幫浦充血</h3><p><strong>倒退走／倒退雪橇（Backward Sled/Walk）</strong>：零衝擊為膝關節注入滑液與血液。</p><p><strong>脛前肌上提（Tibialis Raise）</strong>：建立急停煞車與防夾脛緩衝力。</p></article>
+        <article><span>02</span><h3>單側控制與膝踝剛性</h3><p><strong>波力奎步（Poliquin Step Up）</strong>：斜板受控離心，精準強化髕骨與股內側肌（VMO）。</p></article>
+        <article><span>03</span><h3>極限活動度與長步幅推進</h3><p><strong>ATG 分腿蹲（ATG Split Squat）</strong>：前腿深蹲包覆、後腿延展髖屈肌，打開極限關節活動度。</p></article>
+        <article><span>04</span><h3>後側鏈極限煞車與下背防護</h3><p><strong>北歐彎舉（Nordic Curl）</strong>與<strong>背伸展（Back Extension）</strong>：打造防拉傷的膝屈煞車力與下背終末推進力。</p></article>
+      </div>
+    </section>
+
+    <section className="atg-section">
+      <p className="section-kicker">04 · 適合對象</p>
+      <h2>適合對象與具體成效</h2>
+      <div className="atg-list">
+        <div><h3>下肢關節卡痛、久坐族</h3><p>膝蓋緊繃、上下樓梯不適、足踝僵硬，找回日常無痛活動能力。</p></div>
+        <div><h3>球類運動員與跑者</h3><p>提升垂直彈跳、推進步幅、急停制動力並大幅預防運動傷害。</p></div>
+        <div><h3>健身與體態追求者</h3><p>解鎖深蹲深度，建立兼具「高力量」與「高柔軟度」的防彈身體。</p></div>
+      </div>
+    </section>
+    <div className="atg-cta"><p>想了解適合自己的訓練起點？</p><button className="hero-cta" type="button" onClick={() => { setAtgView(false); showBooking(); }}>立即預約體驗課</button></div>
+  </main>;
+
   if (!bookingView) return <main className="page">
     <header className="hero">
       <div className="hero-mark" aria-hidden="true"></div>
@@ -111,6 +161,7 @@ export function App() {
         <li><strong>進修研習</strong><span>KAT training 進階阻力訓練</span></li>
       </ul>
       <p className="hero-copy">訓練不該是生活的負擔，而是讓生活更輕鬆的工具。歡迎預約體驗課，一起找出最適合你的動作模式！</p>
+      <button className="atg-link" type="button" onClick={() => { setAtgView(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>了解 ATG 系統 →</button>
       <button className="hero-cta" type="button" onClick={showBooking}>立即預約體驗課</button>
     </header>
   </main>;
