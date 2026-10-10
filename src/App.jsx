@@ -24,6 +24,33 @@ const choices = {
   time: ['平日白天（09:00－17:00）', '平日晚上（18:00－22:00）', '週末假日（全日）', '其他'],
 };
 
+const englishLabels = {
+  gender: 'Gender', work: 'Daily work pattern', sleep: 'Average sleep per night',
+  condition: 'Diagnosed medical conditions', symptoms: 'Symptoms during exercise or rest',
+  injuries: 'Current or past injuries', pregnancy: 'Pregnancy or postpartum status',
+  exerciseFrequency: 'Average exercise frequency per week', activities: 'Usual exercise activities',
+  coaching: 'Previous one-to-one coaching experience', barriers: 'Main challenges with exercise or fitness',
+  focus: 'What would you like help with?', frequency: 'Preferred weekly class frequency',
+  time: 'Preferred class times',
+};
+
+const englishOptions = {
+  gender: { 男: 'Male', 女: 'Female', 不願透露: 'Prefer not to say' },
+  work: { '久坐辦公（每日坐姿超過 6 小時）': 'Desk-based work (seated over 6 hours/day)', 長時間站立或走動: 'Prolonged standing or walking', 重體力或高活動量工作: 'Physically demanding / highly active work', 其他: 'Other' },
+  sleep: { '未滿 5 小時': 'Less than 5 hours', '5～6 小時': '5–6 hours', '6～8 小時': '6–8 hours', '8 小時以上': '8 hours or more' },
+  condition: { 否: 'No', '是（請於下方說明）': 'Yes (please describe below)' },
+  symptoms: { 否: 'No', 是: 'Yes' },
+  injuries: { 無任何舊傷或疼痛: 'No current injury or pain', '頸部／肩部': 'Neck / shoulder', '下背／腰部': 'Lower back', 膝蓋: 'Knee', 腳踝: 'Ankle', '其他關節或手術史': 'Other joint issue or surgery history' },
+  pregnancy: { 否: 'No', '是（懷孕中）': 'Yes (pregnant)', '是（產後半年內）': 'Yes (within 6 months postpartum)' },
+  exerciseFrequency: { '幾乎沒有（0 天）': 'Almost none (0 days)', '1～2 天': '1–2 days', '3～4 天': '3–4 days', '5 天以上': '5 days or more' },
+  activities: { '肌力／重量訓練（器械或自由重量）': 'Strength / resistance training', '跑步／單車／游泳等耐力有氧': 'Endurance cardio', '團體有氧課（如飛輪、Les Mills、HIIT）': 'Group fitness classes', '瑜伽／皮拉提斯／伸展': 'Yoga / Pilates / mobility', '球類運動／登山攀岩': 'Ball sports / hiking / climbing', 尚無固定項目: 'No regular activity yet' },
+  coaching: { '否，這是第一次': 'No, this is my first time', '是，半年以內曾上過': 'Yes, within the past 6 months', '是，已是一年以前': 'Yes, over a year ago' },
+  barriers: { '缺乏動力與自律，難以持續': 'Motivation or consistency', '不清楚正確動作，容易受傷或代償疼痛': 'Unsure of technique / concerned about pain', '自行排課／飲食效果不明顯，進入瓶頸': 'Training or nutrition plateau', '時間難以安排': 'Scheduling difficulties', 其他: 'Other' },
+  focus: { '身體組成與動作活動度檢測評估': 'Body composition and mobility assessment', '完整的個人化課表訓練體驗': 'Personalized training session', '長期訓練規劃諮詢': 'Long-term training consultation' },
+  frequency: { '每週 1 次': 'Once a week', '每週 2 次': 'Twice a week', '每週 3 次以上': '3 or more times a week', '先體驗看看，暫不確定': 'Try first; not sure yet' },
+  time: { '平日白天（09:00－17:00）': 'Weekday daytime (09:00–17:00)', '平日晚上（18:00－22:00）': 'Weekday evening (18:00–22:00)', '週末假日（全日）': 'Weekend / public holiday', 其他: 'Other' },
+};
+
 function ChoiceGroup({ name, label, options, value, onChange, multiple = false, required = true, otherKey, form, error }) {
   const selected = multiple ? value : [value];
   const toggle = (option) => {
@@ -34,12 +61,12 @@ function ChoiceGroup({ name, label, options, value, onChange, multiple = false, 
   return (
     <section className={`form-section ${error ? 'has-error' : ''}`} data-field={name}>
       <fieldset>
-        <legend>{label}{required && <span className="required">＊</span>}</legend>
+        <legend>{label}{required && <span className="required">＊</span>}<small className="english-label">{englishLabels[name]}</small></legend>
         <div className="choice-list">
           {options.map((option) => (
             <label className="choice" key={option}>
               <input type={multiple ? 'checkbox' : 'radio'} name={name} checked={selected.includes(option)} onChange={() => toggle(option)} />
-              <span>{option}</span>
+              <span>{option}{englishOptions[name]?.[option] && <small className="choice-english">{englishOptions[name][option]}</small>}</span>
             </label>
           ))}
         </div>
@@ -165,12 +192,12 @@ export function App() {
     <form onSubmit={submit} noValidate>
       <section className="intro-card"><p className="section-kicker">開始前的小問卷</p><h2>讓第一次見面，更貼近你的需要。</h2><p>以下資料僅用於安排體驗課與調整訓練內容。標示 <span className="required">＊</span> 的欄位為必填。</p></section>
       <div className="form-grid">
-        <section className={`form-section ${errors.name ? 'has-error' : ''}`} data-field="name"><label>姓名<span className="required">＊</span><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="請輸入姓名" /></label>{errors.name && <p className="field-error">{errors.name}</p>}</section>
-        <section className={`form-section ${errors.phone ? 'has-error' : ''}`} data-field="phone"><label>聯絡電話<span className="required">＊</span><input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.phone && <p className="field-error">{errors.phone}</p>}</section>
-        <section className={`form-section ${errors.line ? 'has-error' : ''}`} data-field="line"><label>LINE ID<span className="required">＊</span><small>方便後續傳送預約確認與提醒</small><input value={form.line} onChange={(e) => update('line', e.target.value)} placeholder="請輸入 LINE ID" /></label>{errors.line && <p className="field-error">{errors.line}</p>}</section>
-        <section className={`form-section ${errors.birthday ? 'has-error' : ''}`} data-field="birthday"><label>生日<span className="required">＊</span><input type="date" value={form.birthday} onChange={(e) => update('birthday', e.target.value)} /></label>{errors.birthday && <p className="field-error">{errors.birthday}</p>}</section>
-        <section className={`form-section ${errors.height ? 'has-error' : ''}`} data-field="height"><label>身高（cm）<span className="required">＊</span><input type="number" inputMode="decimal" min="50" max="250" step="0.1" value={form.height} onChange={(e) => update('height', e.target.value)} placeholder="例如：165" /></label>{errors.height && <p className="field-error">{errors.height}</p>}</section>
-        <section className={`form-section ${errors.weight ? 'has-error' : ''}`} data-field="weight"><label>體重（kg）<span className="required">＊</span><input type="number" inputMode="decimal" min="20" max="350" step="0.1" value={form.weight} onChange={(e) => update('weight', e.target.value)} placeholder="例如：55" /></label>{errors.weight && <p className="field-error">{errors.weight}</p>}</section>
+        <section className={`form-section ${errors.name ? 'has-error' : ''}`} data-field="name"><label>姓名<span className="required">＊</span><small className="english-label">Full name</small><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="請輸入姓名" /></label>{errors.name && <p className="field-error">{errors.name}</p>}</section>
+        <section className={`form-section ${errors.phone ? 'has-error' : ''}`} data-field="phone"><label>聯絡電話<span className="required">＊</span><small className="english-label">Phone number</small><input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.phone && <p className="field-error">{errors.phone}</p>}</section>
+        <section className={`form-section ${errors.line ? 'has-error' : ''}`} data-field="line"><label>LINE ID<span className="required">＊</span><small className="english-label">For booking confirmations and reminders</small><input value={form.line} onChange={(e) => update('line', e.target.value)} placeholder="請輸入 LINE ID" /></label>{errors.line && <p className="field-error">{errors.line}</p>}</section>
+        <section className={`form-section ${errors.birthday ? 'has-error' : ''}`} data-field="birthday"><label>生日<span className="required">＊</span><small className="english-label">Date of birth</small><input type="date" value={form.birthday} onChange={(e) => update('birthday', e.target.value)} /></label>{errors.birthday && <p className="field-error">{errors.birthday}</p>}</section>
+        <section className={`form-section ${errors.height ? 'has-error' : ''}`} data-field="height"><label>身高（cm）<span className="required">＊</span><small className="english-label">Height (cm)</small><input type="number" inputMode="decimal" min="50" max="250" step="0.1" value={form.height} onChange={(e) => update('height', e.target.value)} placeholder="例如：165" /></label>{errors.height && <p className="field-error">{errors.height}</p>}</section>
+        <section className={`form-section ${errors.weight ? 'has-error' : ''}`} data-field="weight"><label>體重（kg）<span className="required">＊</span><small className="english-label">Weight (kg)</small><input type="number" inputMode="decimal" min="20" max="350" step="0.1" value={form.weight} onChange={(e) => update('weight', e.target.value)} placeholder="例如：55" /></label>{errors.weight && <p className="field-error">{errors.weight}</p>}</section>
       </div>
       <ChoiceGroup name="gender" label="性別" options={choices.gender} value={form.gender} onChange={update} error={errors.gender} />
       <ChoiceGroup name="work" label="日常工作型態" options={choices.work} value={form.work} onChange={update} otherKey="workOther" form={form} error={errors.work || errors.workOther} />
@@ -178,10 +205,10 @@ export function App() {
 
       <div className="section-heading"><p className="section-kicker">健康與運動背景</p><h2>先了解身體現在的狀態</h2></div>
       <ChoiceGroup name="condition" label="是否曾有醫師診斷患有心血管疾病、高血壓、氣喘或其他慢性疾病？" options={choices.condition} value={form.condition} onChange={update} error={errors.condition} />
-      {form.condition.startsWith('是') && <section className={`form-section ${errors.conditionNote ? 'has-error' : ''}`} data-field="conditionNote"><label>慢性疾病說明<span className="required">＊</span><textarea value={form.conditionNote} onChange={(e) => update('conditionNote', e.target.value)} placeholder="請簡述診斷、目前感受或需注意事項" /></label>{errors.conditionNote && <p className="field-error">{errors.conditionNote}</p>}</section>}
+      {form.condition.startsWith('是') && <section className={`form-section ${errors.conditionNote ? 'has-error' : ''}`} data-field="conditionNote"><label>慢性疾病說明<span className="required">＊</span><small className="english-label">Medical condition details</small><textarea value={form.conditionNote} onChange={(e) => update('conditionNote', e.target.value)} placeholder="請簡述診斷、目前感受或需注意事項" /></label>{errors.conditionNote && <p className="field-error">{errors.conditionNote}</p>}</section>}
       <ChoiceGroup name="symptoms" label="運動中或日常靜止時，是否曾出現胸悶、胸痛、呼吸困難或頭暈眩暈？" options={choices.symptoms} value={form.symptoms} onChange={update} error={errors.symptoms} />
       <ChoiceGroup name="injuries" label="過去或目前是否有骨骼肌肉舊傷、關節問題或脊椎不適？" options={choices.injuries} value={form.injuries} onChange={update} multiple otherKey="injuryNote" form={form} error={errors.injuries} />
-      <section className={`form-section ${errors.injuryNote ? 'has-error' : ''}`} data-field="injuryNote"><label>受傷時間、目前感受或限制<span className="required">＊</span><textarea value={form.injuryNote} onChange={(e) => update('injuryNote', e.target.value)} placeholder="若無，請填「無」" /></label>{errors.injuryNote && <p className="field-error">{errors.injuryNote}</p>}</section>
+      <section className={`form-section ${errors.injuryNote ? 'has-error' : ''}`} data-field="injuryNote"><label>受傷時間、目前感受或限制<span className="required">＊</span><small className="english-label">Injury history, current symptoms, or limitations</small><textarea value={form.injuryNote} onChange={(e) => update('injuryNote', e.target.value)} placeholder="若無，請填「無」" /></label>{errors.injuryNote && <p className="field-error">{errors.injuryNote}</p>}</section>
       {form.gender === '女' && <ChoiceGroup name="pregnancy" label="目前是否懷孕或產後半年內？（女性填寫）" options={choices.pregnancy} value={form.pregnancy} onChange={update} error={errors.pregnancy} />}
       <ChoiceGroup name="exerciseFrequency" label="目前每週平均運動頻率" options={choices.exerciseFrequency} value={form.exerciseFrequency} onChange={update} error={errors.exerciseFrequency} />
       <ChoiceGroup name="activities" label="平常最常進行的運動項目？（可複選）" options={choices.activities} value={form.activities} onChange={update} multiple error={errors.activities} />
@@ -193,11 +220,11 @@ export function App() {
       <ChoiceGroup name="frequency" label="若體驗後感覺符合需求，未來每週預計可配合的上課頻率？" options={choices.frequency} value={form.frequency} onChange={update} error={errors.frequency} />
       <ChoiceGroup name="time" label="方便安排上課的常見時段（可複選）" options={choices.time} value={form.time} onChange={update} multiple otherKey="timeOther" form={form} error={errors.time || errors.timeOther} />
       <div className="emergency-grid">
-        <section className={`form-section ${errors.emergencyContact ? 'has-error' : ''}`} data-field="emergencyContact"><label>緊急聯絡人<span className="required">＊</span><input value={form.emergencyContact} onChange={(e) => update('emergencyContact', e.target.value)} placeholder="請輸入姓名" /></label>{errors.emergencyContact && <p className="field-error">{errors.emergencyContact}</p>}</section>
-        <section className={`form-section ${errors.emergencyRelation ? 'has-error' : ''}`} data-field="emergencyRelation"><label>聯絡人關係<span className="required">＊</span><input value={form.emergencyRelation} onChange={(e) => update('emergencyRelation', e.target.value)} placeholder="例如：家人、配偶、朋友" /></label>{errors.emergencyRelation && <p className="field-error">{errors.emergencyRelation}</p>}</section>
-        <section className={`form-section ${errors.emergencyPhone ? 'has-error' : ''}`} data-field="emergencyPhone"><label>聯絡人電話<span className="required">＊</span><input type="tel" value={form.emergencyPhone} onChange={(e) => update('emergencyPhone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.emergencyPhone && <p className="field-error">{errors.emergencyPhone}</p>}</section>
+        <section className={`form-section ${errors.emergencyContact ? 'has-error' : ''}`} data-field="emergencyContact"><label>緊急聯絡人<span className="required">＊</span><small className="english-label">Emergency contact name</small><input value={form.emergencyContact} onChange={(e) => update('emergencyContact', e.target.value)} placeholder="請輸入姓名" /></label>{errors.emergencyContact && <p className="field-error">{errors.emergencyContact}</p>}</section>
+        <section className={`form-section ${errors.emergencyRelation ? 'has-error' : ''}`} data-field="emergencyRelation"><label>聯絡人關係<span className="required">＊</span><small className="english-label">Relationship to you</small><input value={form.emergencyRelation} onChange={(e) => update('emergencyRelation', e.target.value)} placeholder="例如：家人、配偶、朋友" /></label>{errors.emergencyRelation && <p className="field-error">{errors.emergencyRelation}</p>}</section>
+        <section className={`form-section ${errors.emergencyPhone ? 'has-error' : ''}`} data-field="emergencyPhone"><label>聯絡人電話<span className="required">＊</span><small className="english-label">Emergency contact phone</small><input type="tel" value={form.emergencyPhone} onChange={(e) => update('emergencyPhone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.emergencyPhone && <p className="field-error">{errors.emergencyPhone}</p>}</section>
       </div>
-      <section className="form-section" data-field="message"><label>想對教練說的話<small>選填</small><textarea value={form.message} onChange={(e) => update('message', e.target.value)} placeholder="有任何期待、疑問或想先讓教練知道的事，都可以寫在這裡。" /></label></section>
+      <section className="form-section" data-field="message"><label>想對教練說的話<small className="english-label">Anything you would like your coach to know · Optional</small><textarea value={form.message} onChange={(e) => update('message', e.target.value)} placeholder="有任何期待、疑問或想先讓教練知道的事，都可以寫在這裡。" /></label></section>
       <section className={`terms-section ${errors.termsAccepted ? 'has-error' : ''}`} data-field="termsAccepted">
         <h2>課程條款與免責聲明同意書</h2>
         <div className="terms-copy">
