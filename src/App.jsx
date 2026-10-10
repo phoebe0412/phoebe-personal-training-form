@@ -55,7 +55,12 @@ export function App() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState({});
+  const [bookingView, setBookingView] = useState(false);
   const update = (key, value) => setForm((previous) => ({ ...previous, [key]: value }));
+  const showBooking = () => {
+    setBookingView(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   const submit = (event) => {
     event.preventDefault();
     setSubmitError('');
@@ -89,9 +94,9 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (submitted) return <main className="page"><div className="success-card"><p className="eyebrow">預約資料已送出</p><h1>謝謝你，{form.name || '學員'}！</h1><p>我會透過你提供的 LINE ID 與你確認體驗課時間。期待一起找回舒服、穩定的動作節奏。</p><button type="button" onClick={() => setSubmitted(false)}>返回表單</button></div></main>;
+  if (submitted) return <main className="page"><div className="success-card"><p className="eyebrow">預約資料已送出</p><h1>謝謝你，{form.name || '學員'}！</h1><p>我會透過你提供的 LINE ID 與你確認體驗課時間。期待一起找回舒服、穩定的動作節奏。</p><button type="button" onClick={() => { setSubmitted(false); setBookingView(true); }}>返回表單</button></div></main>;
 
-  return <main className="page">
+  if (!bookingView) return <main className="page">
     <header className="hero">
       <div className="hero-mark" aria-hidden="true"></div>
       <p className="eyebrow">PHOEBE PERSONAL TRAINING</p>
@@ -106,6 +111,15 @@ export function App() {
         <li><strong>進修研習</strong><span>KAT training 進階阻力訓練</span></li>
       </ul>
       <p className="hero-copy">訓練不該是生活的負擔，而是讓生活更輕鬆的工具。歡迎預約體驗課，一起找出最適合你的動作模式！</p>
+      <button className="hero-cta" type="button" onClick={showBooking}>立即預約體驗課</button>
+    </header>
+  </main>;
+
+  return <main className="page">
+    <header className="booking-header">
+      <button className="back-button" type="button" onClick={() => { setBookingView(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>← 返回介紹</button>
+      <p className="eyebrow">PHOEBE PERSONAL TRAINING</p>
+      <h1>立即預約體驗課</h1>
     </header>
 
     <form onSubmit={submit} noValidate>
