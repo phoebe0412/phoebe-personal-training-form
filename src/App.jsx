@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GOOGLE_APPS_SCRIPT_URL } from './config';
 
 const initialForm = {
-  name: '', phone: '', emergencyContact: '', emergencyRelation: '', emergencyPhone: '', line: '', birthday: '', height: '', weight: '', gender: '', work: '', workOther: '', sleep: '',
+  name: '', phone: '', email: '', emergencyContact: '', emergencyRelation: '', emergencyPhone: '', line: '', birthday: '', height: '', weight: '', gender: '', work: '', workOther: '', sleep: '',
   condition: '', conditionNote: '', symptoms: '', injuries: [], injuryNote: '', pregnancy: '', exerciseFrequency: '', activities: [],
   coaching: '', barriers: [], barrierOther: '', focus: '', frequency: '', time: [], timeOther: '', message: '', termsAccepted: false,
 };
@@ -93,7 +93,7 @@ export function App() {
     event.preventDefault();
     setSubmitError('');
     const nextErrors = {};
-    const requiredFields = ['name', 'phone', 'line', 'birthday', 'height', 'weight', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exerciseFrequency', 'activities', 'coaching', 'barriers', 'focus', 'frequency', 'time', 'emergencyContact', 'emergencyRelation', 'emergencyPhone', 'termsAccepted'];
+    const requiredFields = ['name', 'phone', 'email', 'line', 'birthday', 'height', 'weight', 'gender', 'work', 'sleep', 'condition', 'symptoms', 'injuries', 'injuryNote', 'exerciseFrequency', 'activities', 'coaching', 'barriers', 'focus', 'frequency', 'time', 'emergencyContact', 'emergencyRelation', 'emergencyPhone', 'termsAccepted'];
     if (form.gender === '女') requiredFields.push('pregnancy');
     if (form.work === '其他') requiredFields.push('workOther');
     if (form.condition.startsWith('是')) requiredFields.push('conditionNote');
@@ -104,6 +104,7 @@ export function App() {
       const value = form[key];
       if (!value || (Array.isArray(value) && value.length === 0) || (typeof value === 'string' && value.trim() === '')) nextErrors[key] = '此欄位為必填，請完成後再送出。';
     });
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) nextErrors.email = '請輸入正確的 Email 格式。';
     if (Object.keys(nextErrors).length) {
       setErrors(nextErrors);
       setSubmitError('請完成所有必填欄位。');
@@ -194,6 +195,7 @@ export function App() {
       <div className="form-grid">
         <section className={`form-section ${errors.name ? 'has-error' : ''}`} data-field="name"><label>姓名<span className="required">＊</span><small className="english-label">Full name</small><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="請輸入姓名" /></label>{errors.name && <p className="field-error">{errors.name}</p>}</section>
         <section className={`form-section ${errors.phone ? 'has-error' : ''}`} data-field="phone"><label>聯絡電話<span className="required">＊</span><small className="english-label">Phone number</small><input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="例如：0912 345 678" /></label>{errors.phone && <p className="field-error">{errors.phone}</p>}</section>
+        <section className={`form-section ${errors.email ? 'has-error' : ''}`} data-field="email"><label>Email<span className="required">＊</span><small className="english-label">Email address</small><input type="email" inputMode="email" autoComplete="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="例如：name@example.com" /></label>{errors.email && <p className="field-error">{errors.email}</p>}</section>
         <section className={`form-section ${errors.line ? 'has-error' : ''}`} data-field="line"><label>LINE ID<span className="required">＊</span><small className="english-label">For booking confirmations and reminders</small><input value={form.line} onChange={(e) => update('line', e.target.value)} placeholder="請輸入 LINE ID" /></label>{errors.line && <p className="field-error">{errors.line}</p>}</section>
         <section className={`form-section ${errors.birthday ? 'has-error' : ''}`} data-field="birthday"><label>生日<span className="required">＊</span><small className="english-label">Date of birth</small><input type="date" value={form.birthday} onChange={(e) => update('birthday', e.target.value)} /></label>{errors.birthday && <p className="field-error">{errors.birthday}</p>}</section>
         <section className={`form-section ${errors.height ? 'has-error' : ''}`} data-field="height"><label>身高（cm）<span className="required">＊</span><small className="english-label">Height (cm)</small><input type="number" inputMode="decimal" min="50" max="250" step="0.1" value={form.height} onChange={(e) => update('height', e.target.value)} placeholder="例如：165" /></label>{errors.height && <p className="field-error">{errors.height}</p>}</section>
