@@ -123,7 +123,7 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (submitted) return <main className="page"><div className="success-card"><p className="eyebrow">預約資料已送出</p><h1>謝謝你，{form.name || '學員'}！</h1><p>我會透過你提供的 LINE ID 與你確認體驗課時間。期待一起找回舒服、穩定的動作節奏。</p><button type="button" onClick={() => { setSubmitted(false); setBookingView(true); }}>返回表單</button></div></main>;
+  if (submitted) return <main className="page"><div className="success-card"><p className="eyebrow">預約資料已送出</p><h1>謝謝你，{form.name || '學員'}！</h1><p>我會透過你提供的 LINE ID 與你確認體驗課時間。期待一起找回舒服、穩定的動作節奏。</p><button type="button" onClick={() => { setForm(initialForm); setErrors({}); setSubmitError(''); setSubmitted(false); setBookingView(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>返回表單</button></div></main>;
 
   if (atgView) return <main className="page atg-page">
     <header className="booking-header">
