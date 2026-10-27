@@ -155,9 +155,9 @@ export function App() {
       <p className="section-kicker">03 · 適合對象</p>
       <h2>適合對象與具體成效</h2>
       <div className="atg-benefits">
-        <article><img className="benefit-image" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=900&q=85" alt="進行下肢活動度訓練" /><h3>下肢關節卡痛、久坐族</h3><p>膝蓋緊繃、上下樓梯不適、足踝僵硬，找回日常無痛活動能力。</p></article>
+        <article><img className="benefit-image" src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=900&q=85" alt="上班族在辦公室久坐工作" /><h3>下肢關節卡痛、久坐族</h3><p>膝蓋緊繃、上下樓梯不適、足踝僵硬，找回日常無痛活動能力。</p></article>
         <article><img className="benefit-image" src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=900&q=85" alt="跑者進行耐力訓練" /><h3>球類運動員與跑者</h3><p>提升垂直彈跳、推進步幅、急停制動力並大幅預防運動傷害。</p></article>
-        <article><img className="benefit-image" src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=900&q=85" alt="在健身房進行力量訓練" /><h3>健身與體態追求者</h3><p>解鎖深蹲深度，建立兼具「高力量」與「高柔軟度」的防彈身體。</p></article>
+        <article><img className="benefit-image" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=85" alt="進行高柔軟度與活動度動作訓練" /><h3>健身與體態追求者</h3><p>解鎖深蹲深度，建立兼具「高力量」與「高柔軟度」的防彈身體。</p></article>
       </div>
     </section>
     <div className="atg-cta"><p>想了解適合自己的訓練起點？</p><button className="hero-cta" type="button" onClick={() => { setAtgView(false); showBooking(); }}>立即預約體驗課</button></div>
